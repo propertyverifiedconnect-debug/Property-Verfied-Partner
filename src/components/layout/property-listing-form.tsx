@@ -30,6 +30,7 @@ interface FormDataType {
   lookingFor: string;
   propertyKind: string;
   propertyType: string;
+  propertyName: string;
   bedroom: string | number;
   bathroom: string | number;
   balconies: string | number;
@@ -63,6 +64,7 @@ export default function PropertyForm() {
     lookingFor: "",
     propertyKind: "",
     propertyType: "",
+    propertyName:"",
     bedroom: "",
      bathroom: "",
      balconies:"",
@@ -104,7 +106,7 @@ const handleSubmit = async () => {
 
     // append fields (strings)
   for (const key of [
-  'lookingFor','propertyKind','propertyType','contact','city','location',
+  'lookingFor','propertyKind','propertyType','propertyName','contact','city','location',
   'bedroom','bathroom','balconies','roomtype','Area','Areaunit',
   'floor','ageproperty','available','availablefor','suitablefor',
   'socialMedia','price','description'
@@ -115,7 +117,7 @@ const handleSubmit = async () => {
   }
 }
 
-
+  
     // append files (input name is 'photos' because server expects that)
     if (formData.photos && formData.photos.length) {
       for (let i = 0; i < formData.photos.length; i++) {
@@ -249,6 +251,17 @@ const handleSubmit = async () => {
 
           {step === 2 && (
             <motion.div initial={{opacity:0}} animate={{x:10 ,opacity:1}} className="space-y-6">
+                 <div>
+                <Label className="text-md font-medium">
+                  Property Name
+                </Label>
+                <Input
+                  placeholder="Enter Property Name"
+                  value={formData.propertyName}
+                  onChange={(e) => handleChange("propertyName", e.target.value)}
+                  className="mt-2"
+                />
+              </div>
               <div>
                 <Label className="text-md font-medium">
                   Property Location
