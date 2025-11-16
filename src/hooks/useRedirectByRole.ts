@@ -14,12 +14,12 @@ export default function useRedirectByRole() {
 
     const checkRole = async () => {
       try {
-        if (!localStorage.getItem("userdata")) {
+        if (!localStorage.getItem("partnerdata")) {
           const res = await axios.get(`${BASEURL}/api/user/profile`, {
             withCredentials: true,
           });
           console.log("Fetched user:", res.data);
-          localStorage.setItem("userdata", JSON.stringify(res.data));
+          localStorage.setItem("partnerdata", JSON.stringify(res.data));
         }
 
         

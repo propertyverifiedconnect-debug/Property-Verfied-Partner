@@ -35,7 +35,7 @@ const UserProfile: React.FC = () => {
     };
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("userdata");
+        const storedUser = localStorage.getItem("partnerdata");
         if (storedUser) {
             const parsed = JSON.parse(storedUser) as User;
             setUser(parsed);
