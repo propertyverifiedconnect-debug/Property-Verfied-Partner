@@ -18,7 +18,7 @@ interface prop {
 
 export default function PartnerDashboard(): JSX.Element {
   return (
-    <div className="w-full py-13 flex flex-col min-h-screen bg-[#CDE4F9]">
+    <div className="w-full py-13 flex flex-col md:w-[26rem] min-h-screen bg-[#CDE4F9]">
       {/* Header */}
 
       {/* Content */}
