@@ -110,7 +110,7 @@ function PropertyCards2({ property, type }: BookingCardsProps) {
 
       {/* Action Button */}
       <Link href={type === "partner" 
-        ? `/dashboard/partner/lead-received/${property.id}`
+        ? `/dashboard/partner/partner-listed-property/${property.id}`
         : `/dashboard/admin/booking-approval/${property.id}`
       }>
         <button className={`${inter.className} w-full bg-pvr hover:bg-[#0070dd] text-white font-semibold py-2 rounded-lg text-sm transition-colors`}>
