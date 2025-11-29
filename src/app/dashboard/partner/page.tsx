@@ -20,7 +20,7 @@ function Page() {
   }
   return (
     <>
-     <Nav/>
+     <Nav setActive={setActive} />
     {!loading &&
     
     <>
@@ -28,7 +28,7 @@ function Page() {
    <div className="min-h-screen w-full flex items-center justify-center pb-10 bg-[#CDE4F9]  ">
 
    {active == "Home" ?
-    <PartnerDashboard/>
+          <PartnerDashboard/>
           :
           <div className='mt-10 w-full  '>
             <UserProfile/>
