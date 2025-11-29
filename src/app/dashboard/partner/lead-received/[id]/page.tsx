@@ -36,6 +36,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
  import { useRouter } from "next/navigation";
 import { getCookieValue } from "@/function/cookie";
+import PropertyDetailsPage from "@/components/shared/property-details";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -252,133 +253,7 @@ const handleMarkAsPurchase = async () => {
       <div
         className={`${inter.className} min-h-screen bg-gradient-to-b from-[#D7E9FB] to-[#C8E2F8] flex flex-col items-center pt-16 pb-24`}
       >
-        {/* Header */}
-        <div className="w-11/12 max-w-md flex items-center  justify-between mb-3">
-          <div className="flex gap-2 items-center justify-center">
-          <Link href="/dashboard/partner/lead-received/">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:bg-[#E2F1FF] p-3 bg-white"
-            >
-              <ArrowLeft className="text-[#007BFF]" />
-            </Button>
-          </Link>
-          <h1 className="font-bold text-2xl text-gray-600">Lead Recevied</h1>
-
-          </div>
-        </div>
-
-        {/* Image Section */}
-        <div className="w-11/12 max-w-md mb-4">
-          <div className="relative">
-            {propertyDetails && !isLoading ? (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <img
-                  src={propertyDetails.property_approved.photos?.[0]}
-                  alt={property.title}
-                  className="w-full h-96 object-cover rounded-2xl shadow-md"
-                />
-              </motion.div>
-            ) : (
-              <Skeleton className="h-96 w-full" />
-            )}
-            <div className="absolute bottom-2 flex items-center justify-center gap-2 left-2 bg-white/90 text-xs px-2 py-1 rounded-full shadow-sm font-medium">
-              Verified Listing <CircleCheck size={16} />
-            </div>
-          </div>
-        </div>
-
-        {/* Property Details */}
-        <Card className="bg-white w-11/12 max-w-md rounded-2xl shadow-lg border-none">
-          <CardContent className="p-5 text-gray-800 text-sm">
-            <h3 className="font-bold border-b border-gray-200 pb-2 mb-3 text-[#007BFF] text-base">
-              Property Details
-            </h3>
-
-            <h1
-              className={`${inter.className} font-bold text-gray-700 text-2xl flex items-center gap-1`}
-            >
-              {propertyDetails?.property_approved.property_type || ""}
-            </h1>
-            <br />
-            <p>
-              <strong>Property Name</strong>
-              <br /> {propertyDetails?.property_approved.property_type}
-            </p>
-            <p>
-              <strong>Location</strong> <br />
-              {propertyDetails?.property_approved.location}
-            </p>
-            <p>
-              <strong>RERA Number</strong> <br /> {property.RERA}
-            </p>
-            <p>
-              <strong>Size / Type / Price:</strong>
-              <br />
-              {property.size} | {property.type} | {property.price}
-            </p>
-
-            <p>
-              <strong>Partner:</strong>
-              <br />
-              {propertyDetails?.property_approved.user_id.name}
-            </p>
-
-            <p>
-              <strong>Booking by:</strong>
-              <br />
-              {propertyDetails?.user_id.name}
-            </p>
-
-            {/* Highlights */}
-            <div className="flex gap-2 flex-wrap mt-4">
-              <span className="bg-[#E9F4FF] text-[#007BFF] flex items-center gap-2 px-2 py-1 text-xs rounded-full">
-                <Car size={14} /> Parking
-              </span>
-              <span className="bg-[#E9F4FF] text-[#007BFF] flex items-center gap-2 px-2 py-1 text-xs rounded-full">
-                <Shield size={14} /> Security
-              </span>
-              <span className="bg-[#E9F4FF] text-[#007BFF] flex items-center gap-2 px-2 py-1 text-xs rounded-full">
-                <MapPin size={14} /> Prime Location
-              </span>
-            </div>
-
-            {/* Description */}
-            <div className="mt-4">
-              <p className="font-semibold mb-1 text-[#007BFF]">Description:</p>
-              <p className="text-gray-700 leading-relaxed text-sm">
-                {property.description}
-              </p>
-            </div>
-
-            {/* Contact */}
-            <div className="mt-4">
-              <p className="font-semibold text-[#007BFF]">Contact</p> <br />
-              <Button className="w-full bg-green-500 hover:bg-green-600 text-white rounded-xl flex items-center justify-center gap-2">
-                <Phone size={18} /> WhatsApp
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* AI Analysis */}
-        
-
-        <Card className="bg-white w-11/12 max-w-md rounded-2xl mt-3 shadow-lg border-none">
-          <CardContent className="p-5 text-gray-800 text-sm">
-            <h3 className="font-bold border-b flex gap-2 border-gray-200 pb-2 mb-3 text-[#007BFF] text-base">
-              <Link2 /> Social Media Links
-            </h3>
-
-            <div className="p-2 w-full flex flex-wrap gap-2">
-              <Badge className="px-2 py-1">Video Link</Badge>
-              <Badge className="px-2 py-1">Google</Badge>
-              <Badge className="px-2 py-1">JustDial</Badge>
-              <Badge className="px-2 py-1">Other</Badge>
-            </div>
-          </CardContent>
-        </Card>
+     <PropertyDetailsPage propertyDetails={propertyDetails?.property_approved}/>
 
         {/* Action Buttons */}
         <div className="flex items-center fixed shadow rounded-2xl bottom-4 bg-white p-4 justify-center gap-3 w-11/12 max-w-md">
