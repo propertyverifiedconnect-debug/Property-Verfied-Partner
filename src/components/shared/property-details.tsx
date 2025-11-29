@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   ArrowLeft,
   Phone,
+  Clock,
   Download,
   CircleCheck,
   Car,
@@ -12,6 +13,12 @@ import {
   Link2,
   Home,
   Bed,
+  
+  Waves,
+  PawPrint,
+  Store,
+
+  Wifi,
   Bath,
   Maximize,
   Calendar,
@@ -22,6 +29,9 @@ import {
   Share2,
   Wind,
   Check,
+  ChevronRightIcon,
+  ChevronRight,
+  DoorOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,7 +42,7 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
-function PropertyDetailsPage({ propertyDetails, isLoading }) {
+function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybooking }) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -59,6 +69,15 @@ function PropertyDetailsPage({ propertyDetails, isLoading }) {
       window.open(`https://wa.me/91${propertyDetails.contact}`, '_blank');
     }
   };
+ const amenityIcons = {
+  parking: Car,
+  security: Shield,
+  pool: Waves,
+  'pet-friendly': PawPrint,
+  store: Store,
+  location: MapPin,
+  wifi: Wifi,
+};
 
   const handleShare = () => {
     if (navigator.share) {
@@ -77,7 +96,12 @@ function PropertyDetailsPage({ propertyDetails, isLoading }) {
       {/* Header */}
       <div className="w-11/12 max-w-md flex items-center justify-between mb-3">
         <div className="flex gap-2 items-center">
-          <Link href="/dashboard/partner/partner-listed-property/">
+          
+          
+           {
+            type == "lead" ? 
+            <>
+            <Link href="/dashboard/partner/lead-received/">
             <Button
               variant="ghost"
               size="icon"
@@ -86,7 +110,22 @@ function PropertyDetailsPage({ propertyDetails, isLoading }) {
               <ArrowLeft className="text-[#007BFF]" />
             </Button>
           </Link>
-          <h1 className="font-bold text-2xl text-gray-700">Property Details</h1>
+            <h1 className="font-bold text-2xl text-gray-700">Lead Recived</h1>
+            </>
+            :
+            <>
+            <Link href="/dashboard/partner/partner-listed-property/">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-[#E2F1FF] p-3 bg-white"
+            >
+              <ArrowLeft className="text-[#007BFF]" />
+            </Button>
+          </Link>
+            <h1 className="font-bold text-2xl text-gray-700">Property Details</h1>
+            </>
+           }
         </div>
         <div className="flex gap-2">
           <Button
@@ -168,14 +207,53 @@ function PropertyDetailsPage({ propertyDetails, isLoading }) {
             </div>
           </div>
 
+{
+  type == "lead" ?
+   <div className="bg-gradient-to-r w-full  text-zinc-900  rounded-xl mt-3">
+              <h1 className='flex items-center'><strong>Booking By</strong>  <ChevronRight size={19}/>   <h1 className='font-normal'>
+                {propertybooking?.user_id.name}
+                </h1> </h1>
+            
+            <div className="bg-amber-50 rounded-lg py-2 mt-2 px-2 mb-3">
+            <p className="text-xl text-amber-900 mb-2 font-bold flex items-center  ">Scheduled Visit <ChevronRight size={19}/></p>
+            <div className="flex flex-col items-start gap-3 text-xs text-amber-700">
+              {propertybooking?.visit_date && (
+                <span className="flex items-center text-lg gap-1">
+                  <Calendar size={24} />
+                  {formatDate(propertybooking?.visit_date)}
+                </span>
+              )}
+              {propertybooking?.visit_time && (
+                <span className="flex items-center text-lg  gap-1">
+                  <Clock size={20} />
+                  {propertybooking?.visit_time}
+                </span>
+              )}
+                {propertybooking?.visit_time && (
+                <span className="flex items-center  text-lg  gap-1">
+                 <h1 className=' capitalize flex gap-2'><DoorOpen/> {propertybooking?.visit_type} visit</h1>
+            
+                
+                </span>
+              )}
+            </div>
+          </div>
+
+          </div>
+  
+  :
              <div className="bg-gradient-to-r w-full  text-zinc-900  rounded-xl mt-3">
-              <h1><strong>Description</strong></h1>
-            <div className="flex items-center justify-center gap-1">
-               <h1>
+              <h1 className='flex items-center'><strong>Description</strong> <ChevronRightIcon className='mt-0.5' size={17}/></h1>
+            <div className="flex items-center  gap-1">
+               <h1 className='font-normal'>
                 {propertyDetails?.description}
                 </h1>
             </div>
           </div>
+
+}
+
+            
 
           
         </CardContent>
@@ -184,7 +262,7 @@ function PropertyDetailsPage({ propertyDetails, isLoading }) {
       {/* Quick Facts */}
       <Card className="bg-white w-11/12 max-w-md rounded-2xl shadow-lg border-none mb-3">
         <CardContent className="p-5">
-          <h3 className="font-bold text-[#007BFF] text-base mb-4 flex items-center gap-2">
+          <h3 className="font-medium  text-pvr text-lg mb-4 flex items-center gap-2">
             <Home size={20} />
             Property Overview
           </h3>
@@ -317,24 +395,33 @@ function PropertyDetailsPage({ propertyDetails, isLoading }) {
       {/* Features & Amenities */}
       <Card className="bg-white w-11/12 max-w-md rounded-2xl shadow-lg border-none mb-3">
         <CardContent className="p-5">
-          <h3 className="font-bold text-[#007BFF] text-base mb-4 flex items-center gap-2">
+          <h3 className="font-bold text-pvr text-base mb-4 flex items-center gap-2">
             <Check size={20} />
             Features & Amenities
           </h3>
           
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-2 bg-[#E9F4FF] text-[#007BFF] px-3 py-2 rounded-lg">
-              <Car size={16} />
-              <span className="text-sm font-medium">Parking</span>
-            </div>
-            <div className="flex items-center gap-2 bg-[#E9F4FF] text-[#007BFF] px-3 py-2 rounded-lg">
+          <div className="flex flex-wrap gap-3">
+        {
+  propertyDetails?.Options?.map((val, inx) => {
+    // Get the icon component based on the string value
+    const IconComponent = amenityIcons[val.toLowerCase()] || MapPin; // MapPin as fallback
+    
+    return (
+      <div key={inx} className="flex items-center gap-2 text-[#E9F4FF] bg-[#2396C6] px-3 py-2 rounded-lg">
+        <IconComponent size={16} />
+        <span className="text-sm font-medium">{val}</span>
+      </div>
+    );
+  })
+}
+            {/* <div className="flex items-center gap-2 bg-[#E9F4FF] text-[#007BFF] px-3 py-2 rounded-lg">
               <Shield size={16} />
               <span className="text-sm font-medium">Security</span>
             </div>
             <div className="flex items-center gap-2 bg-[#E9F4FF] text-[#007BFF] px-3 py-2 rounded-lg">
               <MapPin size={16} />
               <span className="text-sm font-medium">Prime Location</span>
-            </div>
+            </div> */}
             <div className="flex items-center gap-2 bg-[#E9F4FF] text-[#007BFF] px-3 py-2 rounded-lg">
               <Home size={16} />
               <span className="text-sm font-medium">{propertyDetails?.balconies} Balcony</span>
@@ -370,6 +457,9 @@ function PropertyDetailsPage({ propertyDetails, isLoading }) {
       )}
 
       {/* Action Buttons */}
+      {
+        type !== "lead" &&
+
       <div className="flex items-center fixed shadow-xl rounded-2xl bottom-4 bg-white p-4 justify-center gap-3 w-11/12 max-w-md z-50">
         <Button className="flex-1 bg-[#2396C6] hover:bg-[#1a7399] text-white py-6 text-base rounded-xl font-medium shadow-md">
           <Download className="mr-2" size={20} />
@@ -377,6 +467,7 @@ function PropertyDetailsPage({ propertyDetails, isLoading }) {
         </Button>
 
       </div>
+      }
     </div>
   );
 }

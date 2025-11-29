@@ -150,7 +150,7 @@ const Page: React.FC = () => {
   return (
     <>
       <Nav />
-    <PropertyDetailsPage propertyDetails={propertyDetails} isLoading={isLoading}/>
+    <PropertyDetailsPage propertyDetails={propertyDetails}  isLoading={isLoading}/>
     </>
   );
 };

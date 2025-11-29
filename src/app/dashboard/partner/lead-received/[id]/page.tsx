@@ -250,13 +250,12 @@ const handleMarkAsPurchase = async () => {
   return (
     <>
       <Nav />
-      <div
-        className={`${inter.className} min-h-screen bg-gradient-to-b from-[#D7E9FB] to-[#C8E2F8] flex flex-col items-center pt-16 pb-24`}
-      >
-     <PropertyDetailsPage propertyDetails={propertyDetails?.property_approved}/>
+     
+     <PropertyDetailsPage propertyDetails={propertyDetails?.property_approved} propertybooking={propertyDetails} type={'lead'}/>
 
         {/* Action Buttons */}
-        <div className="flex items-center fixed shadow rounded-2xl bottom-4 bg-white p-4 justify-center gap-3 w-11/12 max-w-md">
+        <div className="w-full flex items-center justify-center">
+        <div className={`${inter.className} flex items-center fixed shadow rounded-2xl bottom-4 bg-white p-4 justify-center gap-3 w-11/12 max-w-md`}>
           <Button className="flex-1 bg-[#2396C6] hover:bg-[#0062cc] text-white py-5 text-base rounded-xl font-medium shadow">
             <Download /> Brochure
           </Button>
@@ -326,7 +325,9 @@ const handleMarkAsPurchase = async () => {
     </DialogContent>
   </Dialog>
         </div>
-      </div>
+
+        </div>
+    
     </>
   );
 };
