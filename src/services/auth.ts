@@ -2,6 +2,7 @@
 
 import axios, { AxiosError } from "axios";
 
+
 const BASEURL = process.env.API_URL; // ✅ server-side env (not public)
 
 interface LoginProps {
@@ -12,6 +13,7 @@ interface LoginProps {
 
 export async function loginUser({ email, password, role }: LoginProps) {
   try {
+
     const res = await axios.post(
       `${BASEURL}/api/auth/login`,
       { email, password, role },

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import {
@@ -10,10 +10,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import axios from "axios";
+import { getCookieValue } from "@/function/cookie";
+import MiddlewareLoader from "./middleware-loader";
 
 export default function MobileHighgraph() {
   const containerRef = useRef(null);
   const [chartHeight, setChartHeight] = useState(320);
+  const [GraphData, setGraphData] = useState({});
+
+  const BASEURL = process.env.NEXT_PUBLIC_API_URL;
 
   // Dropdown filter states
   const [month, setMonth] = useState("All Months");
@@ -21,20 +27,11 @@ export default function MobileHighgraph() {
 
   const months = [
     "All Months",
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    ...(GraphData?.[year]
+      ? Object.keys(GraphData[year]).filter((m) => m !== "All Months")
+      : []),
   ];
-  const years = ["2023", "2024", "2025"];
+  const years = Object.keys(GraphData || {});
 
   // Responsive chart height
   useEffect(() => {
@@ -50,26 +47,117 @@ export default function MobileHighgraph() {
     return () => window.removeEventListener("resize", setResponsiveHeight);
   }, []);
 
+  function calculatePropertyStatistics(properties: Property[]): YearData {
+    const categories = ["approved", "Contact", "Purchase"];
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    // Initialize the statistics object
+    const stats: YearData = {};
+
+    // Process each property
+    properties.forEach((property) => {
+      const createdDate = new Date(property.created_at);
+      const year = createdDate.getFullYear().toString();
+      const month = monthNames[createdDate.getMonth()];
+
+      // Initialize year if it doesn't exist
+      if (!stats[year]) {
+        stats[year] = {
+          "All Months": [0, 0, 0],
+        };
+      }
+
+      // Initialize month if it doesn't exist
+      if (!stats[year][month]) {
+        stats[year][month] = [0, 0, 0];
+      }
+
+      // Map status to category index
+      let categoryIndex = -1;
+      const status = property.status?.toLowerCase() || "";
+
+      if (status.includes("approved")) {
+        categoryIndex = 0; // Bookings
+      } else if (status.includes("contact")) {
+        categoryIndex = 1; // Contact
+      } else if (status.includes("purchase")) {
+        categoryIndex = 2; // Purchase
+      }
+
+      // Increment the count for the appropriate category
+      if (categoryIndex !== -1) {
+        stats[year][month][categoryIndex]++;
+        stats[year]["All Months"][categoryIndex]++;
+      }
+    });
+
+    console.log(stats);
+    return stats;
+  }
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get(
+          `${BASEURL}/api/user/getApprovedBooking`,
+          {
+            headers: {
+              Authorization: `Bearer ${getCookieValue()}`, // <-- Add your JWT token here
+            },
+          }
+        );
+
+        const stats = calculatePropertyStatistics(response.data.booking);
+        setGraphData(stats);
+
+        const availableYears = Object.keys(stats);
+
+        if (availableYears.length > 0) {
+          setYear(availableYears[0]);
+          setMonth("All Months");
+        }
+
+        console.log(response.data.booking);
+      } catch (err) {
+        console.error("Failed to fetch properties", err);
+      }
+    };
+    fetchProperties();
+  }, []);
+
   // Example mock data (Month & Year-wise)
-  const sampleData = {
+  const sampledata = {
     "2025": {
-      "January": [40, 30, 10, 5],
-      "February": [35, 25, 8, 4],
-      "March": [45, 32, 9, 6],
-      "All Months": [120, 87, 27, 15],
+      January: [40, 30, 10],
+      February: [35, 25, 8],
+      March: [45, 32, 9],
+      "All Months": [120, 87, 27],
     },
     "2024": {
-      "January": [30, 20, 6, 3],
-      "February": [28, 22, 4, 2],
-      "March": [33, 24, 5, 4],
-      "All Months": [95, 66, 18, 9],
+      January: [30, 20, 6],
+      February: [28, 22, 4],
+      March: [33, 24, 5],
+      "All Months": [95, 66, 18],
     },
   };
 
-  const categories = ["New Leads", "Booked", "Cancelled", "Registry Done"];
+  const categories = ["Bookings", "Contact", "Purchase"];
 
-  const data =
-    sampleData[year]?.[month] || sampleData[year]?.["All Months"] || [0, 0, 0, 0];
+  const data = GraphData?.[year]?.[month] ||
+    GraphData?.[year]?.["All Months"] || [0, 0, 0, 0];
 
   const options = {
     chart: {
@@ -125,7 +213,10 @@ export default function MobileHighgraph() {
               {month} <ChevronDown size={16} />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-60 overflow-y-auto">
+          <DropdownMenuContent
+            align="start"
+            className="max-h-60 overflow-y-auto"
+          >
             {months.map((m) => (
               <DropdownMenuItem key={m} onClick={() => setMonth(m)}>
                 {m}
@@ -155,9 +246,21 @@ export default function MobileHighgraph() {
       </div>
 
       {/* Chart Section */}
+       {
+        Object.keys(GraphData).length !== 0  ?
       <div className="bg-white/90 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
-        <HighchartsReact highcharts={Highcharts} options={options} />
+         <HighchartsReact highcharts={Highcharts} options={options} />
+         
       </div>
+         :
+
+          <div className="bg-white/90  flex items-center justify-center h-96 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
+                 <svg className='svg' viewBox="25 25 50 50">
+  <circle className='circle' r="20" cy="50" cx="50"></circle>
+</svg>
+         </div>
+       }
+       
     </div>
   );
 }
