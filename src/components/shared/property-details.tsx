@@ -474,10 +474,13 @@ function PropertyDetailsPage({ propertyDetails, isLoading  , type , propertybook
         type !== "lead" &&
 
       <div className="flex items-center fixed shadow-xl rounded-2xl bottom-4 bg-white p-4 justify-center gap-3 w-11/12 max-w-md z-50">
-        <Button className="flex-1 bg-[#2396C6] hover:bg-[#1a7399] text-white py-6 text-base rounded-xl font-medium shadow-md">
+      <a href={propertyDetails?.brochure || "#"} className='w-full' >
+
+        <Button className={`flex-1 w-full  ${propertyDetails?.brochure ? "bg-[#2396C6]" : "bg-zinc-500"} text-white py-6 text-base rounded-xl font-medium shadow-md`}>
           <Download className="mr-2" size={20} />
-          Brochure
+         {propertyDetails?.brochure ? "Brochure" : "No Brochure"}
         </Button>
+      </a>
 
       </div>
       }

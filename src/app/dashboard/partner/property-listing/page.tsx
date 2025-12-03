@@ -38,9 +38,6 @@ export default function PropertyDetailsForm() {
 
           <PropertyForm/>
 
-
-
-
     </div>
     </>
   );

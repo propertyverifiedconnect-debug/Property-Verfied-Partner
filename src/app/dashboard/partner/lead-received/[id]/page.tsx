@@ -37,6 +37,7 @@ import { motion } from "framer-motion";
  import { useRouter } from "next/navigation";
 import { getCookieValue } from "@/function/cookie";
 import PropertyDetailsPage from "@/components/shared/property-details";
+import toast from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -196,7 +197,7 @@ const handleContactLead = async () => {
      openWhatsApp(propertyDetails?.user_id.contact)
        router.push("/dashboard/partner/lead-received")   
        
-       alert("Lead contacted successfully:")
+       toast.success("Lead contacted successfully")
 
     console.log('Lead contacted successfully:', response.data);
     // Handle success - update status or show success message
@@ -225,8 +226,8 @@ const handleMarkAsPurchase = async () => {
             }});
 
   
-       
-       alert("Lead contacted successfully:")
+        router.push("/dashboard/partner/lead-received")   
+       toast.success("Lead Mark as Purchase");
     
     console.log('Marked as purchase successfully:', response.data);
     // Handle success

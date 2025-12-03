@@ -11,6 +11,8 @@ import axios from "axios";
 import { useRouter } from 'next/navigation';
 import Cookies from "js-cookie";
 import { loginUser } from "@/services/auth";
+import { EyeOff, Eye } from "lucide-react";
+import toast from "react-hot-toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +35,8 @@ interface FormErrors {
 export default function LoginInForm() {
   const router = useRouter();
     const BASEURL = process.env.NEXT_PUBLIC_API_URL
+    const [showPassword, setShowPassword] = useState(false);
+
 
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -80,24 +84,27 @@ export default function LoginInForm() {
         const res = await loginUser({email: formData.email,
   password: formData.password,
   role: formData.role,})
+     
+
+  
 
   Cookies.set("client_token_partner",res.token, {
   expires: 1,        
   secure: true,     
   sameSite: "strict"
   });
-        alert(res.message);
-        router.push("/dashboard/partner");
+  router.push("/dashboard/partner");
+  toast.success(res.message || "Login successful!");
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           // AxiosError: may have response.data.error
-          alert(err.response?.data?.error ?? err.message);
+          toast.error(err.response?.data?.error ?? err.message);
            setloading(false);
         } else if (err instanceof Error) {
-          alert(err.message);
+       toast.error(err.message);
           setloading(false);
         } else {
-          alert(String(err));
+         toast.error(String(err));
           setloading(false);
         }
       }
@@ -131,18 +138,35 @@ export default function LoginInForm() {
         </div>
 
         {/* Password */}
-        <div>
-          <Label htmlFor="password" className="mb-2 text-[#247FBA]">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Enter password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-        </div>
+   <div className="relative">
+  <Label htmlFor="password" className="mb-2 text-[#247FBA]">
+    Password
+  </Label>
+
+  <div className="relative">
+    <Input
+      id="password"
+      name="password"
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter password"
+      value={formData.password}
+      onChange={handleChange}
+      className="pr-10"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-[#247FBA]"
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+
+  {errors.password && (
+    <p className="text-red-500 text-sm">{errors.password}</p>
+  )}
+</div>
 
         <div className="w-full h-5 flex items-center justify-between">
           <div className="flex gap-2">

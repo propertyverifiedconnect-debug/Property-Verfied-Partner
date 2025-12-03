@@ -36,6 +36,7 @@ import { Textarea } from "../ui/textarea";
 import { Upload } from "lucide-react";
 import { getCookieValue } from "@/function/cookie";
 import MiddlewareLoader from "../shared/middleware-loader";
+import toast from "react-hot-toast";
 
 interface FormDataType {
   lookingFor: string;
@@ -64,6 +65,7 @@ interface FormDataType {
   profession: string;
   Lifestyle: string;
   Apartmentsize: string;
+  brochure: string;
   Options: string[];
   city?: string;
 }
@@ -78,13 +80,13 @@ const [showUploadModal, setShowUploadModal] = useState(false);
 
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
   const amenityComponents = [
-    <Car size={20} />,
-    <Shield size={20} />,
-    <Waves size={20} />,
-    <PawPrint size={20} />,
-    <Store size={20} />,
-    <MapPin size={20} />,
-    <Wifi size={20} />,
+    <Car key={1} size={20} />,
+    <Shield key={2} size={20} />,
+    <Waves key={3} size={20} />,
+    <PawPrint key={4} size={20} />,
+    <Store key={5} size={20} />,
+    <MapPin key={6} size={20} />,
+    <Wifi key={7} size={20} />,
   ];
 
   const [formData, setFormData] = useState<FormDataType>({
@@ -113,6 +115,7 @@ const [showUploadModal, setShowUploadModal] = useState(false);
     Lifestyle: "",
     Apartmentsize: "",
     Options: [],
+    brochure: "",
     location: "",
     price: "",
   });
@@ -200,7 +203,7 @@ const validateStep = (currentStep: number): boolean => {
   } else {
     // Show first error message
     const firstError = Object.values(errors)[0];
-    alert(firstError || "Please fill all required fields");
+    toast.error(firstError || "Please fill all required fields");
   }
 };
   const handlePrev = () => setStep((prev) => prev - 1);
@@ -229,7 +232,7 @@ const validateStep = (currentStep: number): boolean => {
   const handleSubmit = async () => {
       if (!validateStep(3)) {
     const firstError = Object.values(errors)[0];
-    alert(firstError || "Please fill all required fields before submitting");
+    toast.error(firstError || "Please fill all required fields before submitting");
     return;
   }
   
@@ -266,6 +269,7 @@ const validateStep = (currentStep: number): boolean => {
         "Lifestyle",
         "Apartmentsize",
         "socialMedia",
+        "brochure",
         "price",
         "description",
       ] as (keyof FormDataType)[]) {
@@ -306,7 +310,7 @@ const validateStep = (currentStep: number): boolean => {
           setShowUploadModal(false);
 
 
-      alert("✅ Form Submitted Successfully!");
+      toast.success("✅ Form Submitted Successfully!");
       router.push("/dashboard/partner");
 
       console.log("Response:", response.data);
@@ -922,6 +926,17 @@ const validateStep = (currentStep: number): boolean => {
                   placeholder="https://instagram.com/yourproperty"
                   value={formData.socialMedia}
                   onChange={(e) => handleChange("socialMedia", e.target.value)}
+                  className="mt-2"
+                />
+                  
+              </div>
+
+                  <div>
+                <Label> Property Brochure Link </Label>
+                <Input
+                  placeholder="https://google-drive.com/yourproperty"
+                  value={formData.brochure}
+                  onChange={(e) => handleChange("brochure", e.target.value)}
                   className="mt-2"
                 />
                   
