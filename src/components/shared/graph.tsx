@@ -13,11 +13,13 @@ import { ChevronDown } from "lucide-react";
 import axios from "axios";
 import { getCookieValue } from "@/function/cookie";
 import MiddlewareLoader from "./middleware-loader";
+import inter from "@/lib/font/Inter";
 
 export default function MobileHighgraph() {
   const containerRef = useRef(null);
   const [chartHeight, setChartHeight] = useState(320);
   const [GraphData, setGraphData] = useState({});
+    const [loading, setLoading] = useState(true);
 
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -47,69 +49,58 @@ export default function MobileHighgraph() {
     return () => window.removeEventListener("resize", setResponsiveHeight);
   }, []);
 
-  function calculatePropertyStatistics(properties: Property[]): YearData {
-    const categories = ["approved", "Contact", "Purchase"];
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
+function calculatePropertyStatistics(properties: Property[]): YearData {
+  const categories = ["approved", "Contact", "Purchase"];
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
 
-    // Initialize the statistics object
-    const stats: YearData = {};
+  const stats: YearData = {};
 
-    // Process each property
-    properties.forEach((property) => {
-      const createdDate = new Date(property.created_at);
-      const year = createdDate.getFullYear().toString();
-      const month = monthNames[createdDate.getMonth()];
+  properties.forEach((property) => {
+    const createdDate = new Date(property.created_at);
+    if (isNaN(createdDate.getTime())) return;
 
-      // Initialize year if it doesn't exist
-      if (!stats[year]) {
-        stats[year] = {
-          "All Months": [0, 0, 0],
-        };
-      }
+    const year = createdDate.getFullYear().toString();
+    const month = monthNames[createdDate.getMonth()];
 
-      // Initialize month if it doesn't exist
-      if (!stats[year][month]) {
-        stats[year][month] = [0, 0, 0];
-      }
+    // Ensure year exists
+    if (!stats[year]) {
+      stats[year] = {};
+    }
 
-      // Map status to category index
-      let categoryIndex = -1;
-      const status = property.status?.toLowerCase() || "";
+    // Ensure month exists with default values
+    if (!stats[year][month]) {
+      stats[year][month] = [0, 0, 0];
+    }
 
-      if (status.includes("approved")) {
-        categoryIndex = 0; // Bookings
-      } else if (status.includes("contact")) {
-        categoryIndex = 1; // Contact
-      } else if (status.includes("purchase")) {
-        categoryIndex = 2; // Purchase
-      }
+    // Ensure "All Months" exists
+    if (!stats[year]["All Months"]) {
+      stats[year]["All Months"] = [0, 0, 0];
+    }
 
-      // Increment the count for the appropriate category
-      if (categoryIndex !== -1) {
-        stats[year][month][categoryIndex]++;
-        stats[year]["All Months"][categoryIndex]++;
-      }
-    });
+    // STATUS mapping
+    let index = -1;
+    const status = property.status?.toLowerCase() || "";
 
-    console.log(stats);
-    return stats;
-  }
+    if (status.includes("approved")) index = 0;
+    else if (status.includes("contact")) index = 1;
+    else if (status.includes("purchase")) index = 2;
+
+    if (index !== -1) {
+      stats[year][month][index]++;
+      stats[year]["All Months"][index]++;
+    }
+  });
+
+  return stats;
+}
+
 
   useEffect(() => {
     const fetchProperties = async () => {
+         setLoading(true);
       try {
         const response = await axios.get(
           `${BASEURL}/api/user/getApprovedBooking`,
@@ -133,6 +124,8 @@ export default function MobileHighgraph() {
         console.log(response.data.booking);
       } catch (err) {
         console.error("Failed to fetch properties", err);
+      }finally{
+ setLoading(false);
       }
     };
     fetchProperties();
@@ -157,7 +150,7 @@ export default function MobileHighgraph() {
   const categories = ["Bookings", "Contact", "Purchase"];
 
   const data = GraphData?.[year]?.[month] ||
-    GraphData?.[year]?.["All Months"] || [0, 0, 0, 0];
+    GraphData?.[year]?.["All Months"] || [0, 0, 0];
 
   const options = {
     chart: {
@@ -246,19 +239,24 @@ export default function MobileHighgraph() {
       </div>
 
       {/* Chart Section */}
-       {
+       { loading ? 
+  <div className="bg-white/90  flex items-center justify-center h-96 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
+                 <svg className='svg' viewBox="25 25 50 50">
+  <circle className='circle' r="20" cy="50" cx="50"></circle>
+</svg>
+         </div>
+          :
+        
         Object.keys(GraphData).length !== 0  ?
       <div className="bg-white/90 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
          <HighchartsReact highcharts={Highcharts} options={options} />
          
       </div>
          :
-
-          <div className="bg-white/90  flex items-center justify-center h-96 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
-                 <svg className='svg' viewBox="25 25 50 50">
-  <circle className='circle' r="20" cy="50" cx="50"></circle>
-</svg>
+  <div className="bg-white/90  flex items-center justify-center h-96 dark:bg-slate-900/80 p-2 w-full rounded-2xl shadow-sm">
+              <h1 className={`text-xl font-bold text-gray-400 ${inter.className}`}>No Booking Availabe </h1>
          </div>
+        
        }
        
     </div>

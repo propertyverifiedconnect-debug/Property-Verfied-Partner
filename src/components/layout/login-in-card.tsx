@@ -197,7 +197,7 @@ export default function LoginInForm() {
       </form>
       <hr className="mt-3" />
       <div className="w-full flex items-center justify-center">
-       <GoogleLogin />
+       <GoogleLogin/>
       </div>
       <p className="mt-5 text-xs font-bold text-center text-gray-400">Don &apos t have an Account, <Link href={"/auth/sign-in"}><span className="hover:underline"> Sign-up</span></Link></p>
     </div>
