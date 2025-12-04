@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import { loginUser } from "@/services/auth";
 import { EyeOff, Eye } from "lucide-react";
 import toast from "react-hot-toast";
+import GoogleLogin from "../shared/google-login";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -196,10 +197,7 @@ export default function LoginInForm() {
       </form>
       <hr className="mt-3" />
       <div className="w-full flex items-center justify-center">
-        <Button className="w-50 m-auto mt-4 hover:scale-105 hover:bg-white hover:border-2 bg-white border-2 text-[#247FBA]">
-          <GoogleIcon />
-          Google Login
-        </Button>
+       <GoogleLogin />
       </div>
       <p className="mt-5 text-xs font-bold text-center text-gray-400">Don &apos t have an Account, <Link href={"/auth/sign-in"}><span className="hover:underline"> Sign-up</span></Link></p>
     </div>

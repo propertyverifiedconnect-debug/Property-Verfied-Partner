@@ -34,7 +34,7 @@ export async function loginUser({ email, password, role }: LoginProps) {
 
     // ❗ server actions MUST throw an Error, not objects
       throw new Error(
-    err.response?.data?.message ?? "Login failed. Try again."
+     "Login failed. Try again."
   );
   }
 }

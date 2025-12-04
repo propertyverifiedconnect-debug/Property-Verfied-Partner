@@ -118,7 +118,7 @@ export default function SignInForm(): JSX.Element {
       <form onSubmit={handleSubmit} className={`${inter.className} space-y-4 `}>
  
         {/* Name */}
-        <div className=" flex items-center justify-between gap-3">x
+        <div className=" flex items-center justify-between gap-3">
         <div>
           <Label htmlFor="name" className="mb-2 text-[#247FBA]">Name</Label>
           <Input
