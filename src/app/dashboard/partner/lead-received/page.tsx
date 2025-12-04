@@ -41,6 +41,7 @@ function Page() {
   const [properties, setProperties] = useState<Property[]>([]); 
   const [selected, setSelected] = useState('bookings');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
   
   const tabs = [
     { id: 'bookings', label: 'Bookings', status: 'approved' },
@@ -50,6 +51,7 @@ function Page() {
 
   useEffect(() => {
     const fetchProperties = async () => {
+       setLoading(true);
       try {
         const response = await axios.get(`${BASE_URL}/api/user/getApprovedBooking`,{   headers: {
                     "Authorization": `Bearer ${getCookieValue()}`  
@@ -60,6 +62,8 @@ function Page() {
       } catch (err) {
         console.error('Failed to fetch properties', err);
         setProperties([]);
+      }finally {
+        setLoading(false);
       }
     };
     fetchProperties();
@@ -156,17 +160,16 @@ function Page() {
               transition={{ duration: 0.3 }}
               className="flex flex-col gap-2"
             >
-              {properties.length === 0 ? (
+               {loading ? (
                 // Loading state
                 <div className='flex flex-col gap-1'>
                   <Skeleton className='h-30 w-full' />
                   <Skeleton className='h-30 w-full' />
                   <Skeleton className='h-30 w-full' />
                   <Skeleton className='h-30 w-full' />
-                  
                 </div>
               ) : filteredProperties.length > 0 ? (
-                // Filtered results with staggered animation
+                // Filtered results
                 filteredProperties.map((p, i) => (
                   <motion.div
                     key={p.id}
@@ -178,7 +181,7 @@ function Page() {
                   </motion.div>
                 ))
               ) : (
-                // No results message with animation
+                // No results
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}

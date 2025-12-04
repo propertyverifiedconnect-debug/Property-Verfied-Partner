@@ -41,6 +41,7 @@ function Page() {
   const [properties, setProperties] = useState<Property[]>([]); 
   const [selected, setSelected] = useState('approved');
   const [searchQuery, setSearchQuery] = useState('');
+    const [loading, setLoading] = useState(true);
   
   const tabs = [
     { id: 'approved', label: 'Approved Property', status: 'adminApproved' },
@@ -51,6 +52,7 @@ function Page() {
 
   useEffect(() => {
     const fetchProperties = async () => {
+       setLoading(true); 
       try {
         const response = await axios.get(`${BASE_URL}/api/partner/setAllPartnerProperty`,{ headers: {
                     "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
@@ -61,6 +63,8 @@ function Page() {
       } catch (err) {
         console.error('Failed to fetch properties', err);
         setProperties([]);
+      }finally{
+          setLoading(false);
       }
     };
     fetchProperties();
@@ -159,17 +163,16 @@ function Page() {
               transition={{ duration: 0.3 }}
               className="flex flex-col gap-2"
             >
-              {properties.length === 0 ? (
+           {loading ? (
                 // Loading state
                 <div className='flex flex-col gap-1'>
                   <Skeleton className='h-30 w-full' />
                   <Skeleton className='h-30 w-full' />
                   <Skeleton className='h-30 w-full' />
                   <Skeleton className='h-30 w-full' />
-                  
                 </div>
               ) : filteredProperties.length > 0 ? (
-                // Filtered results with staggered animation
+                // Filtered results
                 filteredProperties.map((p, i) => (
                   <motion.div
                     key={p.id}
@@ -177,11 +180,11 @@ function Page() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05, duration: 0.3 }}
                   >
-                     <PropertyCards2 property={p} type={"partner"} />
+                    <PropertyCards2 property={p} type={"partner"} />
                   </motion.div>
                 ))
               ) : (
-                // No results message with animation
+                // No results
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}

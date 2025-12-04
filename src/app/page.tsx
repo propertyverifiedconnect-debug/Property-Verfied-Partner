@@ -7,6 +7,7 @@ import Link from "next/link";
 import GoogleIcon from "../../public/icons/googleicon";
 import inter from "@/lib/font/Inter";
 import { CircleCheck } from "lucide-react";
+import GoogleLogin from "@/components/shared/google-login";
 
 export default function Home() {
   const [showCard, setShowCard] = useState(false);
@@ -115,10 +116,7 @@ export default function Home() {
             </h2>
 
             <div className="w-full flex items-center justify-center">
-              <Button className="w-50 m-auto mt-2 transition-all hover:scale-105 hover:bg-white hover:border-2 bg-white border-2 text-[#247FBA]">
-                <GoogleIcon />
-                Google Login
-              </Button>
+             <GoogleLogin/>
             </div>
           </div>
         </motion.div>
