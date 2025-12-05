@@ -180,17 +180,26 @@ const openWhatsApp = (phone) => {
 
 const handleContactLead = async () => {
   setIsLoading2(true);
+
+  const propertyID =  propertyDetails?.id
+  console.log( "123 - ", propertyID) 
   
   try {
-    const response = await axios.post(`${BASEURL}/api/partner/setBookingtoContact`, {
-      propertyId: propertyDetails?.id,
-    },
-     {
+
+       const response = await axios.post<ApiResponse>(
+       `/api/partnerPost/setContact`, // <-- Simplified URL
+      { propertyId: propertyID } // Send the ID in the body
+      // We no longer need the 'headers' or 'getCookieValue()' here.
+    );
+    // const response = await axios.post(`${BASEURL}/api/partner/setBookingtoContact`, {
+    //   propertyId: propertyDetails?.id,
+    // },
+    //  {
       
-        headers: {
-            "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
-            }
-     });
+    //     headers: {
+    //         "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
+    //         }
+    //  });
     
      openWhatsApp(propertyDetails?.user_id.contact)
        router.push("/dashboard/partner/lead-received")   
@@ -216,12 +225,13 @@ const handleContactLead = async () => {
 
 const handleMarkAsPurchase = async () => {
   setIsLoading2(true);
+     const propertyID =  propertyDetails?.id
   try {
-    const response = await axios.post(`${BASEURL}/api/partner/setBookingtoPurchase`, {
-      propertyId: propertyDetails?.id,
-    },  { withCredentials: true ,  headers: {
-            "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
-            }});
+     const response = await axios.post<ApiResponse>(
+       `/api/partnerPost/setPurchase`, // <-- Simplified URL
+      { propertyId: propertyID } // Send the ID in the body
+      // We no longer need the 'headers' or 'getCookieValue()' here.
+    );
 
   
         router.push("/dashboard/partner/lead-received")   

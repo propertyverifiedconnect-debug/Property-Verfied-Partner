@@ -75,8 +75,8 @@ export default function PropertyForm() {
   const [loading, setloading] = useState(false);
   const router = useRouter();
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-const [errors, setErrors] = useState<{ [key: string]: string }>({});
-const [showUploadModal, setShowUploadModal] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
   const amenityComponents = [
@@ -120,92 +120,100 @@ const [showUploadModal, setShowUploadModal] = useState(false);
     price: "",
   });
 
+  const validateStep = (currentStep: number): boolean => {
+    const newErrors: { [key: string]: string } = {};
 
-
-const validateStep = (currentStep: number): boolean => {
-  const newErrors: { [key: string]: string } = {};
-
-  if (currentStep === 1) {
-    if (!formData.lookingFor) newErrors.lookingFor = "Please select what you're looking for";
-    if (!formData.propertyKind) newErrors.propertyKind = "Please select property kind";
-    if (!formData.propertyType) newErrors.propertyType = "Please select property type";
-    if (!formData.contact) {
-      newErrors.contact = "Contact is required";
-    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.contact) && 
-               !/^[0-9]{10}$/.test(formData.contact)) {
-      newErrors.contact = "Enter valid email or 10-digit phone number";
+    if (currentStep === 1) {
+      if (!formData.lookingFor)
+        newErrors.lookingFor = "Please select what you're looking for";
+      if (!formData.propertyKind)
+        newErrors.propertyKind = "Please select property kind";
+      if (!formData.propertyType)
+        newErrors.propertyType = "Please select property type";
+      if (!formData.contact) {
+        newErrors.contact = "Contact is required";
+      } else if (
+        !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.contact) &&
+        !/^[0-9]{10}$/.test(formData.contact)
+      ) {
+        newErrors.contact = "Enter valid email or 10-digit phone number";
+      }
     }
-  }
 
-  if (currentStep === 2) {
-    if (!formData.propertyName) newErrors.propertyName = "Property name is required";
-    if (!formData.location) newErrors.location = "Location is required";
-    if (!formData.city) newErrors.city = "City is required";
-    
-    if (formData.propertyType !== "Plot / Land") {
-      if (!formData.bedroom) newErrors.bedroom = "Select number of bedrooms";
-      if (!formData.bathroom) newErrors.bathroom = "Select number of bathrooms";
-      if (!formData.roomtype) newErrors.roomtype = "Select room type";
-    }
-    
-    if (!formData.capacity) newErrors.capacity = "Property capacity is required";
-    if (!formData.Area) newErrors.Area = "Area is required";
-    if (!formData.Areaunit) newErrors.Areaunit = "Area unit is required";
-    
-    if (formData.propertyType !== "Plot / Land" && !formData.floor) {
-      newErrors.floor = "Floor details are required";
-    }
+    if (currentStep === 2) {
+      if (!formData.propertyName)
+        newErrors.propertyName = "Property name is required";
+      if (!formData.location) newErrors.location = "Location is required";
+      if (!formData.city) newErrors.city = "City is required";
+
+      if (formData.propertyType !== "Plot / Land") {
+        if (!formData.bedroom) newErrors.bedroom = "Select number of bedrooms";
+        if (!formData.bathroom)
+          newErrors.bathroom = "Select number of bathrooms";
+        if (!formData.roomtype) newErrors.roomtype = "Select room type";
+      }
+
+      if (!formData.capacity)
+        newErrors.capacity = "Property capacity is required";
+      if (!formData.Area) newErrors.Area = "Area is required";
+      if (!formData.Areaunit) newErrors.Areaunit = "Area unit is required";
+
+      if (formData.propertyType !== "Plot / Land" && !formData.floor) {
+        newErrors.floor = "Floor details are required";
+      }
       if (formData.propertyType === "Apartment" && !formData.Apartmentsize) {
-      newErrors.ApartmentSize = "Appartment required";
+        newErrors.ApartmentSize = "Appartment required";
+      }
+      if (!formData.ageproperty)
+        newErrors.ageproperty = "Age of property is required";
+      if (!formData.available) {
+        newErrors.available = "Available from date is required";
+      } else if (!/^\d{4}-\d{1,2}-\d{1,2}$/.test(formData.available)) {
+        newErrors.available = "Date must be in YYYY-MM-DD format";
+      } else {
+        // Optional: Check if it's a valid date
+        const dateObj = new Date(formData.available);
+        if (isNaN(dateObj.getTime())) {
+          newErrors.available = "Please enter a valid date";
+        }
+      }
+      if (!formData.availablefor)
+        newErrors.availablefor = "Available for is required";
+      if (!formData.suitablefor)
+        newErrors.suitablefor = "Suitable for is required";
     }
-    if (!formData.ageproperty) newErrors.ageproperty = "Age of property is required";
-  if (!formData.available) {
-    newErrors.available = "Available from date is required";
-  } else if (!/^\d{4}-\d{1,2}-\d{1,2}$/.test(formData.available)) {
-    newErrors.available = "Date must be in YYYY-MM-DD format";
-  } else {
-    // Optional: Check if it's a valid date
-    const dateObj = new Date(formData.available);
-    if (isNaN(dateObj.getTime())) {
-      newErrors.available = "Please enter a valid date";
+
+    if (currentStep === 3) {
+      if (!formData.photos || formData.photos.length === 0) {
+        newErrors.photos = "Please upload at least one photo";
+      } else if (formData.photos.length > 4) {
+        newErrors.photos = "Maximum 4 photos allowed";
+      }
+      if (!formData.price) {
+        newErrors.price = "Price is required";
+      } else if (parseFloat(formData.price) <= 0) {
+        newErrors.price = "Price must be greater than 0";
+      }
+      if (!formData.description) {
+        newErrors.description = "Description is required";
+      } else if (formData.description.length < 20) {
+        newErrors.description = "Description must be at least 20 characters";
+      }
     }
-  }
-    if (!formData.availablefor) newErrors.availablefor = "Available for is required";
-    if (!formData.suitablefor) newErrors.suitablefor = "Suitable for is required";
-  }
 
-  if (currentStep === 3) {
-    if (!formData.photos || formData.photos.length === 0) {
-    newErrors.photos = "Please upload at least one photo";
-  } else if (formData.photos.length > 4) {
-    newErrors.photos = "Maximum 4 photos allowed";
-  }
-    if (!formData.price) {
-      newErrors.price = "Price is required";
-    } else if (parseFloat(formData.price) <= 0) {
-      newErrors.price = "Price must be greater than 0";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateStep(step)) {
+      setStep((prev) => prev + 1);
+    } else {
+      // Show first error message
+      const firstError = Object.values(errors)[0];
+      toast.error(firstError || "Please fill all required fields");
     }
-    if (!formData.description) {
-      newErrors.description = "Description is required";
-    } else if (formData.description.length < 20) {
-      newErrors.description = "Description must be at least 20 characters";
-    }
-  }
-
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
-
-
- const handleNext = () => {
-  if (validateStep(step)) {
-    setStep((prev) => prev + 1);
-  } else {
-    // Show first error message
-    const firstError = Object.values(errors)[0];
-    toast.error(firstError || "Please fill all required fields");
-  }
-};
+  };
   const handlePrev = () => setStep((prev) => prev - 1);
   const handleChange = (field: string, value: string | number) => {
     setFormData({ ...formData, [field]: value });
@@ -224,21 +232,22 @@ const validateStep = (currentStep: number): boolean => {
     }
   };
 
-    const ErrorMessage = ({ error }: { error?: string }) => {
-  if (!error) return null;
-  return <p className="text-red-500 text-xs mt-1">{error}</p>;
-};
+  const ErrorMessage = ({ error }: { error?: string }) => {
+    if (!error) return null;
+    return <p className="text-red-500 text-xs mt-1">{error}</p>;
+  };
 
   const handleSubmit = async () => {
-      if (!validateStep(3)) {
-    const firstError = Object.values(errors)[0];
-    toast.error(firstError || "Please fill all required fields before submitting");
-    return;
-  }
-  
+    if (!validateStep(3)) {
+      const firstError = Object.values(errors)[0];
+      toast.error(
+        firstError || "Please fill all required fields before submitting"
+      );
+      return;
+    }
 
     setloading(true);
-     setShowUploadModal(true);
+    setShowUploadModal(true);
 
     try {
       const fd = new FormData();
@@ -296,26 +305,28 @@ const validateStep = (currentStep: number): boolean => {
       // Get token from wherever you store it (example)
       const token = localStorage.getItem("sb_access_token") || ""; // replace with your storage key
 
-      const response = await axios.post(
-        `${BASEURL}/api/partner/insertPropertyinDB`,
-        fd,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${getCookieValue()}`,
-          },
-          
-        }
-      );
-          setShowUploadModal(false);
+      // const response = await axios.post(
+      //   `${BASEURL}/api/partner/insertPropertyinDB`,
+      //   fd,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //       Authorization: `Bearer ${getCookieValue()}`,
+      //     },
 
+      //   }
+      // );
+
+      const response = await axios.post("/api/partnerPost/setpropertylist", fd);
+
+      setShowUploadModal(false);
 
       toast.success("✅ Form Submitted Successfully!");
       router.push("/dashboard/partner");
 
       console.log("Response:", response.data);
     } catch (error) {
-       setShowUploadModal(false);
+      setShowUploadModal(false);
       if (axios.isAxiosError(error)) {
         console.error(
           "❌ Error submitting form:",
@@ -367,7 +378,6 @@ const validateStep = (currentStep: number): boolean => {
                     )
                   )}
                   <ErrorMessage error={errors.lookingFor} />
-
                 </div>
               </div>
 
@@ -391,7 +401,7 @@ const validateStep = (currentStep: number): boolean => {
                     </Button>
                   ))}
                 </div>
-          <ErrorMessage error={errors.propertyKind} />
+                <ErrorMessage error={errors.propertyKind} />
               </div>
 
               <div>
@@ -547,7 +557,7 @@ const validateStep = (currentStep: number): boolean => {
                     ))}
                   </div>
                   <ErrorMessage error={errors.bedroom} />
-                 <ErrorMessage error={errors.bathroom} />
+                  <ErrorMessage error={errors.bathroom} />
                 </div>
               )}
 
@@ -581,7 +591,7 @@ const validateStep = (currentStep: number): boolean => {
                         </Button>
                       ))}
                     </div>
-                      <ErrorMessage error={errors.ApartmentSize} />
+                    <ErrorMessage error={errors.ApartmentSize} />
                   </div>
                 )}
 
@@ -657,7 +667,7 @@ const validateStep = (currentStep: number): boolean => {
                         "Govt employee",
                         "Student",
                         "Business",
-                        
+
                         "Doctor",
                         "Other",
                       ].map((option) => (
@@ -692,7 +702,7 @@ const validateStep = (currentStep: number): boolean => {
                       "Mart",
                       "Prime Location",
                       "Wifi",
-                    ].map((option ,inx) => (
+                    ].map((option, inx) => (
                       <Button
                         key={option}
                         variant={
@@ -787,7 +797,7 @@ const validateStep = (currentStep: number): boolean => {
                     )
                   )}
                 </div>
-                   <ErrorMessage error={errors.ageproperty} />
+                <ErrorMessage error={errors.ageproperty} />
               </div>
 
               <div>
@@ -800,7 +810,7 @@ const validateStep = (currentStep: number): boolean => {
                   onChange={(e) => handleChange("available", e.target.value)}
                   className="mt-2 w-40"
                 />
-                               <ErrorMessage error={errors.available} />
+                <ErrorMessage error={errors.available} />
               </div>
 
               <div>
@@ -823,8 +833,8 @@ const validateStep = (currentStep: number): boolean => {
                     </Button>
                   ))}
                 </div>
-    
-                                     <ErrorMessage error={errors.availablefor} />
+
+                <ErrorMessage error={errors.availablefor} />
               </div>
 
               <div>
@@ -844,7 +854,6 @@ const validateStep = (currentStep: number): boolean => {
                       {option}
                     </Button>
                   ))}
-  
                 </div>
               </div>
               <div>
@@ -869,7 +878,7 @@ const validateStep = (currentStep: number): boolean => {
                     )
                   )}
                 </div>
-                  <ErrorMessage error={errors.suitablefor} />
+                <ErrorMessage error={errors.suitablefor} />
               </div>
             </motion.div>
           )}
@@ -895,13 +904,19 @@ const validateStep = (currentStep: number): boolean => {
                   </div>
                 </div>
                 {formData.photos && (
-    <p className={`text-xs mt-1 ${formData.photos.length > 4 ? 'text-red-500' : 'text-gray-500'}`}>
-      {formData.photos.length} file(s) selected {formData.photos.length > 4 && '(Maximum 4 allowed)'}
-    </p>
-  )}
+                  <p
+                    className={`text-xs mt-1 ${
+                      formData.photos.length > 4
+                        ? "text-red-500"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {formData.photos.length} file(s) selected{" "}
+                    {formData.photos.length > 4 && "(Maximum 4 allowed)"}
+                  </p>
+                )}
 
-               
-  <ErrorMessage error={errors.photos} />
+                <ErrorMessage error={errors.photos} />
                 {imagePreviews.length > 0 && (
                   <div className="mt-6 p-4 border rounded-lg bg-gray-50">
                     <h3 className="text-sm font-medium mb-3">Preview</h3>
@@ -928,10 +943,9 @@ const validateStep = (currentStep: number): boolean => {
                   onChange={(e) => handleChange("socialMedia", e.target.value)}
                   className="mt-2"
                 />
-                  
               </div>
 
-                  <div>
+              <div>
                 <Label> Property Brochure Link </Label>
                 <Input
                   placeholder="https://google-drive.com/yourproperty"
@@ -939,7 +953,6 @@ const validateStep = (currentStep: number): boolean => {
                   onChange={(e) => handleChange("brochure", e.target.value)}
                   className="mt-2"
                 />
-                  
               </div>
 
               <div>
@@ -1005,30 +1018,30 @@ const validateStep = (currentStep: number): boolean => {
           )}
         </CardFooter>
       </Card>
-         {showUploadModal && (
-      <div className="fixed inset-0 bg-[#000000ae] opacity-109  flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl">
-          <div className="flex flex-col items-center space-y-4">
-              <svg className='svg' viewBox="25 25 50 50">
-  <circle className='circle' r="20" cy="50" cx="50"></circle>
-</svg>
-            
-            <h2 className="text-xl font-bold text-gray-800">
-              Uploading Property...
-            </h2>
-            
-            <p className="text-center text-gray-600">
-              Please do not close or change this tab.
-              Your property is being uploaded.
-            </p>
-            
-            <p className="text-sm text-gray-500">
-              This may take a few moments...
-            </p>
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-[#000000ae] opacity-109  flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div className="flex flex-col items-center space-y-4">
+              <svg className="svg" viewBox="25 25 50 50">
+                <circle className="circle" r="20" cy="50" cx="50"></circle>
+              </svg>
+
+              <h2 className="text-xl font-bold text-gray-800">
+                Uploading Property...
+              </h2>
+
+              <p className="text-center text-gray-600">
+                Please do not close or change this tab. Your property is being
+                uploaded.
+              </p>
+
+              <p className="text-sm text-gray-500">
+                This may take a few moments...
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 }
