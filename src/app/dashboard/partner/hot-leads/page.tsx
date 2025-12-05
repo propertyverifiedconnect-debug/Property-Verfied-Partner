@@ -25,11 +25,7 @@ function Page() {
     const fetchProperties = async () => {
       setIsLoading(true)
       try {
-        const response = await axios.get(`${BASE_URL}/api/refer/getAllApprovedLead`, {
-          headers: {
-            "Authorization": `Bearer ${getCookieValue()}`  
-          }
-        })
+        const response = await axios.get("/api/partner/partnerhotleads");
         // Set properties from response
         setProperties(response.data.customer_leads ?? response.data ?? [])
       } catch (err) {

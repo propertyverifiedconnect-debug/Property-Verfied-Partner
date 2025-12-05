@@ -119,12 +119,11 @@ const Page: React.FC = () => {
     const fetchProperties = async (): Promise<void> => {
       try {
         const response = await axios.post<ApiResponse>(
-          `${BASE_URL}/api/partner/getPropertiesbyID`,
-          { id },
-          {   headers: {
-            "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
-            }}
-        );
+       `/api/partner/getporpertyData`, 
+      { id } 
+     
+    );
+
 
         setPropertyDetails(response.data.properties);
         console.log("Fetched property:", response.data);

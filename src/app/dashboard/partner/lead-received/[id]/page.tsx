@@ -124,12 +124,10 @@ const Page: React.FC = () => {
     const fetchProperties = async (): Promise<void> => {
       try {
         const response = await axios.post<ApiResponse>(
-          `${BASE_URL}/api/user/getBookingforApprovalbyID`,
-          { id },
-          { withCredentials: true ,  headers: {
-            "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
-            }}
-        );
+       `/api/partner/getleadData`, // <-- Simplified URL
+      { id } // Send the ID in the body
+      // We no longer need the 'headers' or 'getCookieValue()' here.
+    );
 
         setPropertyDetails(response.data.booking);
         console.log("Fetched property:", response.data);

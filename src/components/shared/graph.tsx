@@ -102,14 +102,7 @@ function calculatePropertyStatistics(properties: Property[]): YearData {
     const fetchProperties = async () => {
          setLoading(true);
       try {
-        const response = await axios.get(
-          `${BASEURL}/api/user/getApprovedBooking`,
-          {
-            headers: {
-              Authorization: `Bearer ${getCookieValue()}`, // <-- Add your JWT token here
-            },
-          }
-        );
+         const response =  await axios.get("/api/partner/booking-list");
 
         const stats = calculatePropertyStatistics(response.data.booking);
         setGraphData(stats);

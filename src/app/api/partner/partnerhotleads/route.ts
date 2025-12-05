@@ -18,7 +18,7 @@ export async function GET(request: Request) {
      
 console.log( "Route token" ,token)
     // 2. Call your external backend service
-    const res = await axios.get(`${EXTERNAL_BASE_URL}/api/user/profile`, {
+    const res = await axios.get(`${EXTERNAL_BASE_URL}/api/refer/getAllApprovedLead`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

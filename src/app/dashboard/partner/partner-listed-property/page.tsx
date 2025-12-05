@@ -54,9 +54,7 @@ function Page() {
     const fetchProperties = async () => {
        setLoading(true); 
       try {
-        const response = await axios.get(`${BASE_URL}/api/partner/setAllPartnerProperty`,{ headers: {
-                    "Authorization": `Bearer ${getCookieValue()}`  // <-- Add your JWT token here
-                    }});
+        const response =  await axios.get("/api/partner/getListedproperty");
         setProperties(response.data.partner_property ?? response.data ?? []);
         console.log(response.data)
         

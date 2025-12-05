@@ -53,9 +53,7 @@ function Page() {
     const fetchProperties = async () => {
        setLoading(true);
       try {
-        const response = await axios.get(`${BASE_URL}/api/user/getApprovedBooking`,{   headers: {
-                    "Authorization": `Bearer ${getCookieValue()}`  
-                    }});
+        const response =  await axios.get("/api/partner/booking-list");
         setProperties(response.data.booking ?? response.data ?? []);
         console.log(response.data.booking )
         
