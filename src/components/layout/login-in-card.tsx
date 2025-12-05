@@ -86,9 +86,6 @@ export default function LoginInForm() {
   password: formData.password,
   role: formData.role,})
      
-
-  
-
   Cookies.set("client_token_partner",res.token, {
   expires: 1,        
   secure: true,     

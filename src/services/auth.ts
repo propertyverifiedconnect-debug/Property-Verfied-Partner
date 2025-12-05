@@ -24,7 +24,7 @@ export async function loginUser({ email, password, role }: LoginProps) {
       }
     );
     
-    console.log(res);
+    console.log(res.data);
     return res.data;
   } catch (error: unknown) {
     const err = error as AxiosError<any>;

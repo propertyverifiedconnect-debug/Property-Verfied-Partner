@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { getCookieValue } from "@/function/cookie";
+import { GetProfileData } from "@/services/partnerdata";
 
 export default function useRedirectByRole() {
   const router = useRouter();
@@ -24,11 +25,15 @@ export default function useRedirectByRole() {
           user = JSON.parse(storedData);
         } else {
           // Fetch from API if not in localStorage
-          const res = await axios.get(`${BASEURL}/api/user/profile`, {
-            headers: {
-              "Authorization": `Bearer ${getCookieValue()}`  
-            }
-          });
+          // const res = await axios.get(`${BASEURL}/api/user/profile`, {
+          //   headers: {
+          //     "Authorization": `Bearer ${getCookieValue()}`  
+          //   }
+          // });
+        
+
+         const res = await axios.get("/api/partner/profile");
+
           localStorage.setItem("partnerdata", JSON.stringify(res.data));
           user = res.data;
         }
