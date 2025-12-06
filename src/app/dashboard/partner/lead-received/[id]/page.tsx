@@ -38,6 +38,7 @@ import { motion } from "framer-motion";
 import { getCookieValue } from "@/function/cookie";
 import PropertyDetailsPage from "@/components/shared/property-details";
 import toast from "react-hot-toast";
+import { useUnauthorize } from "@/function/unthorize";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -104,6 +105,8 @@ const Page: React.FC = () => {
   const [isLoading2, setIsLoading2] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const BASEURL = process.env.NEXT_PUBLIC_API_URL
+
+  const unauthorize = useUnauthorize()
 
   const property: StaticProperty = {
     title: "Elegant 2BHK Apartment",
@@ -243,6 +246,11 @@ const handleMarkAsPurchase = async () => {
     // Update UI or refresh data
     
   } catch (error) {
+     if (error?.response?.status === 401) {
+        unauthorize();
+        toast.error("User unauthorized! Please login again.");
+      }
+
     if (axios.isAxiosError(error)) {
       console.error('Error marking as purchase:', error.response?.data || error.message);
     } else {

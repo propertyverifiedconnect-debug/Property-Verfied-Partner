@@ -113,16 +113,7 @@ export default function SignInForm(): JSX.Element {
     if (Object.keys(newErrors).length === 0) {
       const loadingToast = toast.loading("Signing up...");
       try {
-        const res = await axios.post<{ message: string }>(
-          `${BASEURL}/api/auth/signup-partner`,
-          form,
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const res = await axios.post<{ message: string }>(`/api/auth/signin`,form);
 
         toast.dismiss(loadingToast);
 

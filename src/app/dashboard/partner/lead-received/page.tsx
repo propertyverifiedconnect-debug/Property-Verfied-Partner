@@ -14,6 +14,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 import BookingCards from '@/components/shared/booking-card'
 import { getCookieValue } from '@/function/cookie'
+import { useUnauthorize } from '@/function/unthorize'
+import toast from 'react-hot-toast'
+
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
@@ -42,6 +45,9 @@ function Page() {
   const [selected, setSelected] = useState('bookings');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+const unauthorize = useUnauthorize();
+
+  
   
   const tabs = [
     { id: 'bookings', label: 'Bookings', status: 'approved' },
@@ -54,11 +60,17 @@ function Page() {
        setLoading(true);
       try {
         const response =  await axios.get("/api/partner/booking-list");
+      
         setProperties(response.data.booking ?? response.data ?? []);
         console.log(response.data.booking )
         
       } catch (err) {
         console.error('Failed to fetch properties', err);
+          if (err?.response?.status === 401) {
+        unauthorize();
+        toast.error("User unauthorized! Please login again.");
+      }
+
         setProperties([]);
       }finally {
         setLoading(false);

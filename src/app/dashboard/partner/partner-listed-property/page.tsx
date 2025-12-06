@@ -14,9 +14,11 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 import PropertyCards2 from '@/components/shared/property-list-card'
 import { getCookieValue } from '@/function/cookie'
+import toast from 'react-hot-toast'
+import { useUnauthorize } from '@/function/unthorize'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
-
+ 
 
 interface Property {
   id: string;
@@ -42,6 +44,7 @@ function Page() {
   const [selected, setSelected] = useState('approved');
   const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
+    const unauthorize =useUnauthorize()
   
   const tabs = [
     { id: 'approved', label: 'Approved Property', status: 'adminApproved' },
@@ -60,6 +63,10 @@ function Page() {
         
       } catch (err) {
         console.error('Failed to fetch properties', err);
+          if (err?.response?.status === 401) {
+        unauthorize();
+        toast.error("User unauthorized! Please login again.");
+      }
         setProperties([]);
       }finally{
           setLoading(false);

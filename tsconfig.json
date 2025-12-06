@@ -35,7 +35,7 @@
     ".next/types/**/*.ts",
     "src/components/shared/bottom-nav.tsx",
     ".next/dev/types/**/*.ts"
-  ],
+, "src/app/api/auth/setContact/route.ts"  ],
   "exclude": [
     "node_modules"
   ]

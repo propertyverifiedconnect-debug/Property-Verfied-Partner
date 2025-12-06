@@ -12,6 +12,8 @@ import Nav from '@/components/layout/nav'
 import { Skeleton } from '@/components/ui/skeleton'
 import ReferCard from '@/components/shared/refer-card'
 import { getCookieValue } from '@/function/cookie'
+import toast from 'react-hot-toast'
+import { useUnauthorize } from '@/function/unthorize'
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
@@ -20,6 +22,7 @@ function Page() {
   const [properties, setProperties] = useState<unknown[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const unauthorize = useUnauthorize()
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -30,6 +33,10 @@ function Page() {
         setProperties(response.data.customer_leads ?? response.data ?? [])
       } catch (err) {
         console.error('Failed to fetch properties', err)
+          if (err?.response?.status === 401) {
+        unauthorize();
+        toast.error("User unauthorized! Please login again.");
+      }
         setProperties([])
       } finally {
         setIsLoading(false)

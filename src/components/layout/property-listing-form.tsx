@@ -37,6 +37,7 @@ import { Upload } from "lucide-react";
 import { getCookieValue } from "@/function/cookie";
 import MiddlewareLoader from "../shared/middleware-loader";
 import toast from "react-hot-toast";
+import { useUnauthorize } from "@/function/unthorize";
 
 interface FormDataType {
   lookingFor: string;
@@ -77,6 +78,7 @@ export default function PropertyForm() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const unauthorize = useUnauthorize()
 
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
   const amenityComponents = [
@@ -327,6 +329,10 @@ export default function PropertyForm() {
       console.log("Response:", response.data);
     } catch (error) {
       setShowUploadModal(false);
+        if (error?.response?.status === 401) {
+        unauthorize();
+        toast.error("User unauthorized! Please login again.");
+      }
       if (axios.isAxiosError(error)) {
         console.error(
           "❌ Error submitting form:",

@@ -177,14 +177,8 @@ export default function ContactCard() {
 
         // Update user profile
         const res = await axios.post(
-          `${BASEURL}/api/auth/resetContactpartner`,
-          form,
-          {
-            headers: {
-              "Authorization": `Bearer ${getCookieValue()}`,
-              "Content-Type": "multipart/form-data",
-            }
-          }
+          `/api/auth/setContact`,
+          form
         );
 
         toast.dismiss(loadingToast);
