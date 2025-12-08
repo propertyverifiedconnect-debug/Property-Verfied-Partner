@@ -34,6 +34,7 @@ type FormData = {
   city: string;
   password: string;
   confirmPassword: string;
+  CompanyName:string ;
   role: string;
   excutiveType: string;
   rera: string;
@@ -50,6 +51,7 @@ export default function SignInForm(): JSX.Element {
     name: "",
     email: "",
     contact: "",
+    CompanyName:"",
     city: "",
     password: "",
     confirmPassword: "",
@@ -88,6 +90,7 @@ export default function SignInForm(): JSX.Element {
     if (!formData.password) newErrors.password = "Password is required";
     if (!formData.confirmPassword)
       newErrors.confirmPassword = "Confirm your password";
+    if (!formData.CompanyName) newErrors.CompanyName = "Company Name is required";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
     if (!formData.terms) newErrors.terms = "You must accept terms";
@@ -101,6 +104,7 @@ export default function SignInForm(): JSX.Element {
     form.append("contact", formData.contact);
     form.append("city", formData.city);
     form.append("role", formData.role);
+    form.append("CompanyName", formData.CompanyName);
     form.append("excutiveType", formData.excutiveType);
     form.append("rera", formData.rera);
 
@@ -150,7 +154,7 @@ export default function SignInForm(): JSX.Element {
   };
 
   return (
-    <div className=" absolute min-h-screen  top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-md p-6  w-94 md:w-[29rem] bg-white rounded-lg shadow-md">
+    <div className=" absolute min-h-screen  top-[70%] left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-md p-6  w-94 md:w-[29rem] bg-white rounded-lg shadow-md">
       <div className="h-20 w-60  m-auto flex items-center justify-center">
         <Image
           src="/image/Logo.png"
@@ -276,6 +280,25 @@ export default function SignInForm(): JSX.Element {
             )}
           </div>
         </div>
+
+   <div>
+            <Label htmlFor="contact" className="mb-2 text-[#247FBA]">
+           CompanyName
+            </Label>
+            <Input
+              id="CompanyName"
+              name="CompanyName"
+              type="text"
+              placeholder="Enter Company Name."
+              value={formData.CompanyName}
+              onChange={handleChange}
+            />
+            {errors.contact && (
+              <p className="text-red-500 text-sm">{errors.CompanyName}</p>
+            )}
+          </div>
+
+
 
         <div>
           <Label htmlFor="city" className="mb-2 text-[#247FBA]">

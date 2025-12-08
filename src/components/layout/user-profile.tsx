@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import inter from '@/lib/font/Inter';
 import {
   Dialog,
@@ -15,6 +16,8 @@ import {
 import { Button } from '@/components/ui/button';
 import Cookies from 'js-cookie'; 
 import toast from 'react-hot-toast';
+import { ChevronRight } from 'lucide-react';
+
 
 interface User {
     name?: string;
@@ -88,6 +91,14 @@ const UserProfile: React.FC = () => {
     return (
         <div className={`${inter.className} min-h-screen w-full bg-[#CDE4F9] justify-center  pb-20 flex flex-col items-center pb-8`}>
             {/* Header with Profile Info */}
+
+
+
+
+
+
+
+
             <div className="w-93 md:w-[26rem]  rounded-b-3xl  pb-8 pt-12">
                 <div className="flex flex-col items-center">
                     {/* Profile Picture */}
@@ -107,13 +118,38 @@ const UserProfile: React.FC = () => {
                 </div>
             </div>
 
+
+              <div className="w-80 md:w-[25rem] mb-2 bg-white rounded-2xl shadow-md p-5">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Company Details</h2>
+                <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                
+                        <div>
+                        <p className="text-sm text-gray-700 flex items-center ">Company Name <ChevronRight size={14}/></p> 
+                        <p className=" text-gray-700 text-2xl">{user?.CompanyName || "Not provided"}</p>
+                               <p className="text-sm text-gray-700 font-bold ">- {user?.excutiveType || "Not provided"}</p>
+                    </div>
+
+                        </div>
+                   
+                    {/* <div className="flex items-center gap-3">
+                        <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <p className="text-sm text-gray-700">{user?.rera || "Not provided"}</p>
+                    </div> */}
+                </div>
+            </div>
+
             {/* Menu Items */}
             <div className="w-80 md:w-[25rem]  space-y-4">
                 {menuItems.map((item, index) => (
+                <Link key={index} href={item.route}>
                     <button
                         key={index}
-                        onClick={() => router.push(item.route)}
-                        className="w-full bg-white rounded-2xl shadow-md p-5 flex items-center gap-4 hover:shadow-xl transition-all duration-300 active:scale-95"
+                      
+                        className="w-full bg-white rounded-2xl mb-3 shadow-md p-5 flex items-center gap-4 hover:shadow-xl transition-all duration-300 active:scale-95"
                     >
                         <div className="h-12 w-12 rounded-full bg-[#CDE4F9] flex items-center justify-center text-gray-700">
                             {item.icon}
@@ -126,11 +162,13 @@ const UserProfile: React.FC = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
+                
+                </Link>
                 ))}
             </div>
 
             {/* User Details Card */}
-            <div className="w-80 md:w-[25rem] mt-6 bg-white rounded-2xl shadow-md p-5">
+            <div className="w-80 md:w-[25rem] bg-white rounded-2xl shadow-md p-5">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Contact Information</h2>
                 <div className="space-y-3">
                     <div className="flex items-center gap-3">
