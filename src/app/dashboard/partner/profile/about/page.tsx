@@ -53,8 +53,8 @@ const page: React.FC = () => {
         <>
      <Nav setActive={"profile"}/>
         
-        <div className={`${inter.className} min-h-screen w-full mt-10 bg-[#CDE4F9] justify-center  pb-20 flex flex-col items-center px-4`}>
-         <div className='w-96 z-[99]'>
+        <div className={`${inter.className} min-h-screen w-full px-4 mt-5 md:mt-10 bg-[#CDE4F9] justify-center  pb-20 flex flex-col items-center md:px-4`}>
+         <div className='w-96 '>
              
              <Link href={"/dashboard/partner"}>
                 <div className='h-10 w-10 ml-3 flex items-center justify-center text-pvr  rounded-2xl  bg-white mt-10'>

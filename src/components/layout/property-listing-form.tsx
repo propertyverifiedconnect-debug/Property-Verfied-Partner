@@ -38,6 +38,7 @@ import { getCookieValue } from "@/function/cookie";
 import MiddlewareLoader from "../shared/middleware-loader";
 import toast from "react-hot-toast";
 import { useUnauthorize } from "@/function/unthorize";
+import { INDIAN_CITIES } from "./Contactcard";
 
 interface FormDataType {
   lookingFor: string;
@@ -62,10 +63,26 @@ interface FormDataType {
   location: string;
   price: string;
   capacity: string;
+  CarpetArea: string;
+  BuildupArea: string;
+  SuperBuildupArea: string;
+  CarpetAreaUnit: string;
+  BuildupAreaUnit: string;
+  SuperBuildupAreaUnit: string;
   alreadyrent: string;
   profession: string;
   Lifestyle: string;
   Apartmentsize: string;
+  AvailabilityStatus: string;
+  allInclusive?: boolean;
+  priceNegotiable?: boolean;
+  taxExcluded?: boolean;
+  Ownership: string;
+  lengthPlot: string;
+  breathPlot: string;
+  Boundary: string;
+  openSide: string;
+  construction: string;
   brochure: string;
   Options: string[];
   city?: string;
@@ -78,7 +95,9 @@ export default function PropertyForm() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const unauthorize = useUnauthorize()
+  const [Amenities, SetAmenties] = useState("");
+  const unauthorize = useUnauthorize();
+  const [showCustomInput, setShowCustomInput] = useState(false);
 
   const BASEURL = process.env.NEXT_PUBLIC_API_URL;
   const amenityComponents = [
@@ -117,7 +136,23 @@ export default function PropertyForm() {
     Lifestyle: "",
     Apartmentsize: "",
     Options: [],
+    CarpetAreaUnit: "",
+    BuildupAreaUnit: "",
+    SuperBuildupAreaUnit: "",
+    CarpetArea: "",
+    BuildupArea: "",
+    SuperBuildupArea: "",
+    Ownership: "",
+    allInclusive: false,
+    priceNegotiable: false,
+    taxExcluded: false,
+    AvailabilityStatus: "",
     brochure: "",
+    lengthPlot: "",
+    breathPlot: "",
+    Boundary: "",
+    openSide: "",
+    construction: "",
     location: "",
     price: "",
   });
@@ -157,8 +192,62 @@ export default function PropertyForm() {
 
       if (!formData.capacity)
         newErrors.capacity = "Property capacity is required";
-      if (!formData.Area) newErrors.Area = "Area is required";
-      if (!formData.Areaunit) newErrors.Areaunit = "Area unit is required";
+      // if (!formData.Area) newErrors.Area = "Area is required";
+      // if (!formData.Areaunit) newErrors.Areaunit = "Area unit is required";
+
+    
+      if (formData.propertyType === "Apartment" && !formData.CarpetArea) {
+        newErrors.CarpetArea = "Carpet Area required";
+      }
+
+        if (formData.propertyType === "Apartment" && !formData.BuildupArea) {
+        newErrors.BuildupArea = "Buildup Area is required";
+      }
+        if (formData.propertyType === "Apartment" && !formData.SuperBuildupArea) {
+        newErrors.SuperBuildupArea = "Super Buildup Area is required";
+      }
+
+         if (formData.propertyType !== "Plot / Land" && !formData.AvailabilityStatus) {
+        newErrors.AvailabilityStatus = "Availability Status is required";
+      }
+      
+
+       if(!formData.Ownership)
+        {
+          newErrors.Ownership= "Ownership is required";
+        }  
+
+ if (formData.propertyType === "Plot / Land")
+ {
+   if(!formData.lengthPlot)
+         {
+           newErrors.lengthPlot= "Length of Plot is required";
+         }  
+  
+           if(!formData.breathPlot)
+         {
+           newErrors.breathPlot= "Breath of Plot is required";
+         }  
+  
+         if(!formData.construction || !formData.openSide || !formData.Boundary)
+         {
+           newErrors.plot1= "Field is required";
+         }  
+           if( !formData.openSide )
+         {
+           newErrors.plot2= "Field is required";
+         }  
+           if( !formData.Boundary)
+         {
+           newErrors.plot3= "Field is required";
+         }  
+
+ }
+
+
+
+
+
 
       if (formData.propertyType !== "Plot / Land" && !formData.floor) {
         newErrors.floor = "Floor details are required";
@@ -179,11 +268,9 @@ export default function PropertyForm() {
           newErrors.available = "Please enter a valid date";
         }
       }
-      if (!formData.availablefor)
-        newErrors.availablefor = "Available for is required";
-      if (!formData.suitablefor)
-        newErrors.suitablefor = "Suitable for is required";
-    }
+    
+
+      }
 
     if (currentStep === 3) {
       if (!formData.photos || formData.photos.length === 0) {
@@ -219,6 +306,7 @@ export default function PropertyForm() {
   const handlePrev = () => setStep((prev) => prev - 1);
   const handleChange = (field: string, value: string | number) => {
     setFormData({ ...formData, [field]: value });
+    console.log(field, value, Amenities);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -279,8 +367,24 @@ export default function PropertyForm() {
         "profession",
         "Lifestyle",
         "Apartmentsize",
+        "CarpetAreaUnit",
+        "BuildupAreaUnit",
+        "SuperBuildupAreaUnit",
+        "CarpetArea",
+        "BuildupArea",
+        "SuperBuildupArea",
+        "Ownership",
+        "AvailabilityStatus",
         "socialMedia",
+        "allInclusive",
+        "priceNegotiable",
+        "taxExcluded",
         "brochure",
+        "lengthPlot",
+        "breathPlot",
+        "Boundary",
+        "openSide",
+        "construction",
         "price",
         "description",
       ] as (keyof FormDataType)[]) {
@@ -329,7 +433,7 @@ export default function PropertyForm() {
       console.log("Response:", response.data);
     } catch (error) {
       setShowUploadModal(false);
-        if (error?.response?.status === 401) {
+      if (error?.response?.status === 401) {
         unauthorize();
         toast.error("User unauthorized! Please login again.");
       }
@@ -441,13 +545,23 @@ export default function PropertyForm() {
 
               <div>
                 <Label className="text-md font-medium">Your Contact</Label>
+                <p
+                  className={`${
+                    formData.contact.length <= 10
+                      ? "text-green-800"
+                      : "text-red-500"
+                  } text-xs mt-2`}
+                >
+                  Phone number Digit {formData.contact.length}
+                </p>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Enter your phone or email"
                   value={formData.contact}
                   onChange={(e) => handleChange("contact", e.target.value)}
                   className="mt-2"
                 />
+
                 <ErrorMessage error={errors.contact} />
               </div>
             </motion.div>
@@ -489,12 +603,13 @@ export default function PropertyForm() {
                   <SelectTrigger className="mt-2 w-full">
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nagpur">Nagpur</SelectItem>
-                    <SelectItem value="pune">Pune</SelectItem>
-                    <SelectItem value="mumbai">Mumbai</SelectItem>
-                    <SelectItem value="delhi">Delhi</SelectItem>
-                  </SelectContent>
+               <SelectContent className="max-h-[200px]">
+                               {INDIAN_CITIES.map((city) => (
+                                 <SelectItem key={city} value={city}>
+                                   {city}
+                                 </SelectItem>
+                               ))}
+                             </SelectContent>
                 </Select>
                 <ErrorMessage error={errors.city} />
               </div>
@@ -600,11 +715,286 @@ export default function PropertyForm() {
                     <ErrorMessage error={errors.ApartmentSize} />
                   </div>
                 )}
+                {formData.propertyType == "Apartment" && (
+                  <>
+
+                    <Label className="text-md font-medium mt-3 ">
+                      Add Apartment Area Details{" "}
+                    </Label>
+                    <Label className="text-sm font-medium text-gray-600  ">
+                      Carpet Area{" "}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        placeholder="Carpet Area"
+                        type="number"
+                        value={formData.CarpetArea}
+                        onChange={(e) =>
+                          handleChange("CarpetArea", e.target.value)
+                        }
+                        className="mt-2 w-40"
+                      />
+                   
+
+                      <Select
+                        onValueChange={(value) =>
+                          handleChange("CarpetAreaUnit", value)
+                        }
+                        value={formData.CarpetAreaUnit}
+                      >
+                        <SelectTrigger className="mt-2 w-40">
+                          <SelectValue placeholder=" Area Unit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sqft">sq.ft</SelectItem>
+                          <SelectItem value="sqyards">sq.yards</SelectItem>
+                          <SelectItem value="sqm">sq.m</SelectItem>
+                          <SelectItem value="acres">acres</SelectItem>
+                          <SelectItem value="marla">marla</SelectItem>
+                          <SelectItem value="cents">cents</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                         <ErrorMessage error={errors.CarpetArea}/>
+                    <Label className="text-sm font-medium text-gray-600 mt-2  ">
+                      Buildup Area{" "}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        placeholder="Buildup Area"
+                        value={formData.BuildupArea}
+                        onChange={(e) =>
+                          handleChange("BuildupArea", e.target.value)
+                        }
+                        className="mt-2 w-40"
+                      />
+
+                      <Select
+                        onValueChange={(value) =>
+                          handleChange("BuildupAreaUnit", value)
+                        }
+                        value={formData.BuildupAreaUnit}
+                      >
+                        <SelectTrigger className="mt-2 w-40">
+                          <SelectValue placeholder="Area Unit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sqft">sq.ft</SelectItem>
+                          <SelectItem value="sqyards">sq.yards</SelectItem>
+                          <SelectItem value="sqm">sq.m</SelectItem>
+                          <SelectItem value="acres">acres</SelectItem>
+                          <SelectItem value="marla">marla</SelectItem>
+                          <SelectItem value="cents">cents</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  <ErrorMessage error={errors.BuildupArea}/>
+                    <Label className="text-sm  mt-2 font-medium text-gray-600  ">
+                      Super Buildup Area{" "}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        placeholder="Super Buildup Area"
+                        value={formData.SuperBuildupArea}
+                        onChange={(e) =>
+                          handleChange("SuperBuildupArea", e.target.value)
+                        }
+                        type="number"
+                        className="mt-2 w-40"
+                      />
+
+                      <Select
+                        onValueChange={(value) =>
+                          handleChange("SuperBuildupAreaUnit", value)
+                        }
+                        value={formData.SuperBuildupAreaUnit}
+                      >
+                        <SelectTrigger className="mt-2 w-40">
+                          <SelectValue placeholder=" Area Unit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sqft">sq.ft</SelectItem>
+                          <SelectItem value="sqyards">sq.yards</SelectItem>
+                          <SelectItem value="sqm">sq.m</SelectItem>
+                          <SelectItem value="acres">acres</SelectItem>
+                          <SelectItem value="marla">marla</SelectItem>
+                          <SelectItem value="cents">cents</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                      <ErrorMessage error={errors.SuperBuildupArea}/>
+                  </>
+                )}
+
+                {formData.propertyType !== "Plot / Land" && (
+
+                  
+                  <div>
+                    <Label className="text-md font-medium mt-4  ">
+                      Availability Status
+                    </Label>
+                    <Select
+                      onValueChange={(value) =>
+                        handleChange("AvailabilityStatus", value)
+                      }
+                      value={formData.AvailabilityStatus}
+                    >
+                      <SelectTrigger className="mt-2 w-50">
+                        <SelectValue placeholder="Select Availability" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Ready to move ">
+                          Ready to move{" "}
+                        </SelectItem>
+                        <SelectItem value="Under construction ">
+                          Under construction{" "}
+                        </SelectItem>
+                        <SelectItem value="Comming Soon">
+                          Comming Soon
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* <ErrorMessage error={errors.city} /> */}
+                     <ErrorMessage error={errors.AvailabilityStatus}/>
+                  </div>
+                )}
+
+                {formData.propertyType === "Plot / Land" && (
+                  <>
+                      <Label className="text-md font-medium mt-3 ">
+                  {" "}
+                Property dimensions  ( In Feet).{" "}
+                </Label>
+                    <div>
+                <Label className="text-sm font-medium mt-3 ">
+                  {" "}
+                 Length of Plot ( In Feet).{" "}
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Length of Plot "
+                    value={formData.lengthPlot}
+                    onChange={(e) => handleChange("lengthPlot", e.target.value)}
+                    className="mt-2 w-50"
+                  />
+                </div>
+                   <ErrorMessage error={errors.lengthPlot}/>
+              </div>
+                <div>
+                <Label className="text-sm font-medium mt-3 ">
+                  {" "}
+                 Breath of Plot ( In Feet ){" "}
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Breath of Plot"
+                    value={formData.breathPlot}
+                    onChange={(e) => handleChange("breathPlot", e.target.value)}
+                    className="mt-2 w-50"
+                  />
+                </div>
+                    <ErrorMessage error={errors.breathPlot}/>
+
+              </div>
+                  <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      Is there boundary wall around the property?
+                    </Label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {["Yes", "No"].map((option) => (
+                        <Button
+                          key={option}
+                          variant={
+                            formData.Boundary === option
+                              ? "selectdashed"
+                              : "select"
+                          }
+                          size={"sm"}
+                          onClick={() => handleChange("Boundary", option)}
+                        >
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                      <ErrorMessage error={errors.plot1}/>
+                  </div>
+
+                    <div>
+                    <Label className="text-md font-medium mt-3 ">
+                      Any construction done on this property?
+                    </Label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {["Yes" , "No"].map((option) => (
+                        <Button
+                          key={option}
+                          variant={
+                            formData.construction === option
+                              ? "selectdashed"
+                              : "select"
+                          }
+                          size={"sm"}
+                          onClick={() => handleChange("construction", option)}
+                        >
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                    <ErrorMessage error={errors.plot2}/>
+                  </div>
+                      <div>
+                    <Label className="text-md font-medium mt-3 ">
+                        No. Of open sides
+                    </Label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {["1","2","3","3+"].map((option) => (
+                        <Button
+                          key={option}
+                          variant={
+                            formData.openSide === option
+                              ? "selectdashed"
+                              : "select"
+                          }
+                          size={"sm"}
+                          onClick={() => handleChange("openSide", option)}
+                        >
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                    <ErrorMessage error={errors.plot3}/>
+                  </div>
+                  </>
+                )}
+
+                <Label className="text-md font-medium mt-3 ">Ownership </Label>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {[
+                    "Freehold",
+                    "Leasehold",
+                    "Co.operative society",
+                    "Power of attorney ",
+                  ].map((option) => (
+                    <Button
+                      key={option}
+                      variant={
+                        formData.Ownership === option
+                          ? "selectdashed"
+                          : "select"
+                      }
+                      size={"sm"}
+                      onClick={() => handleChange("Ownership", option)}
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </div>
+                   <ErrorMessage error={errors.Ownership}/>
 
                 {formData.propertyType !== "Plot / Land" && (
                   <>
                     <Label className="text-md font-medium mt-3 ">
-                      Room Type{" "}
+                      Room Type (Optional){" "}
                     </Label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {["Shared", "Private"].map((option) => (
@@ -630,7 +1020,7 @@ export default function PropertyForm() {
               <div>
                 <Label className="text-md font-medium mt-3 ">
                   {" "}
-                  Property Capacity{" "}
+                  Property Capacity (Optional){" "}
                 </Label>
                 <div className="flex items-center gap-2">
                   <Input
@@ -693,11 +1083,10 @@ export default function PropertyForm() {
                     </div>
                   </div>
                 )}
-
               <div>
                 <div>
                   <Label className="text-md font-medium">
-                    Select Amenities
+                    Select Amenities (Optional)
                   </Label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {[
@@ -708,16 +1097,26 @@ export default function PropertyForm() {
                       "Mart",
                       "Prime Location",
                       "Wifi",
+                      "Other+",
                     ].map((option, inx) => (
                       <Button
                         key={option}
                         variant={
-                          formData.Options.includes(option)
+                          option === "Other+"
+                            ? showCustomInput
+                              ? "selectdashed"
+                              : "select"
+                            : formData.Options.includes(option)
                             ? "selectdashed"
                             : "select"
                         }
                         size={"sm"}
                         onClick={() => {
+                          if (option === "Other+") {
+                            // Toggle custom input visibility without adding "Other" to array
+                            setShowCustomInput(!showCustomInput);
+                            return;
+                          }
                           const exists = formData.Options.includes(option);
                           const updated = exists
                             ? formData.Options.filter((o) => o !== option)
@@ -729,36 +1128,79 @@ export default function PropertyForm() {
                         {option}
                       </Button>
                     ))}
+
+                    {/* Display custom amenities */}
+                    {formData.Options.filter(
+                      (opt) =>
+                        ![
+                          "Parking",
+                          "Security",
+                          "Pool",
+                          "Pet allowed",
+                          "Mart",
+                          "Prime Location",
+                          "Wifi",
+                          "Other+",
+                        ].includes(opt)
+                    ).map((customOption) => (
+                      <Button
+                        key={customOption}
+                        variant="selectdashed"
+                        size={"sm"}
+                        onClick={() => {
+                          const updated = formData.Options.filter(
+                            (o) => o !== customOption
+                          );
+                          handleChange("Options", updated);
+                        }}
+                      >
+                        {customOption}
+                      </Button>
+                    ))}
                   </div>
-                </div>
 
-                <Label className="text-md font-medium mt-3 ">
-                  Add Area Details{" "}
-                </Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Plot Area"
-                    value={formData.Area}
-                    onChange={(e) => handleChange("Area", e.target.value)}
-                    className="mt-2 w-40"
-                  />
-
-                  <Select
-                    onValueChange={(value) => handleChange("Areaunit", value)}
-                    value={formData.Areaunit}
-                  >
-                    <SelectTrigger className="mt-2 w-30">
-                      <SelectValue placeholder="Area Unit" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sqft">sq.ft</SelectItem>
-                      <SelectItem value="sqyards">sq.yards</SelectItem>
-                      <SelectItem value="sqm">sq.m</SelectItem>
-                      <SelectItem value="acres">acres</SelectItem>
-                      <SelectItem value="marla">marla</SelectItem>
-                      <SelectItem value="cents">cents</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {/* Show custom amenities input only when showCustomInput is true */}
+                  {showCustomInput && (
+                    <div>
+                      <Label className="text-md font-medium mt-3">
+                        Custom Amenities
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          placeholder="Add Amenities"
+                          value={Amenities}
+                          onChange={(e) => SetAmenties(e.target.value)}
+                          className="mt-2 w-40"
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter" && Amenities.trim()) {
+                              const updated = [
+                                ...formData.Options,
+                                Amenities.trim(),
+                              ];
+                              handleChange("Options", updated);
+                              SetAmenties("");
+                            }
+                          }}
+                        />
+                        <Button
+                          className="mt-2"
+                          variant={"select"}
+                          onClick={() => {
+                            if (Amenities.trim()) {
+                              const updated = [
+                                ...formData.Options,
+                                Amenities.trim(),
+                              ];
+                              handleChange("Options", updated);
+                              SetAmenties("");
+                            }
+                          }}
+                        >
+                          Add+
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -819,9 +1261,12 @@ export default function PropertyForm() {
                 <ErrorMessage error={errors.available} />
               </div>
 
+
+{
+  formData.propertyType !== "Plot / Land" &&
               <div>
                 <Label className="text-md font-medium mt-3 ">
-                  Available for{" "}
+                  Available for (Optional){" "}
                 </Label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {["Girl", "Boys", "Any"].map((option) => (
@@ -842,9 +1287,10 @@ export default function PropertyForm() {
 
                 <ErrorMessage error={errors.availablefor} />
               </div>
+}
 
               <div>
-                <Label className="text-md font-medium mt-3 ">Lifestyle </Label>
+                <Label className="text-md font-medium mt-3 ">Lifestyle (Optional) </Label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {["Quite", "Social"].map((option) => (
                     <Button
@@ -862,9 +1308,13 @@ export default function PropertyForm() {
                   ))}
                 </div>
               </div>
+
+              { 
+               formData.propertyType !== "Plot / Land"  &&
+
               <div>
                 <Label className="text-md font-medium mt-3 ">
-                  Suitable For{" "}
+                  Suitable For (Optional){" "}
                 </Label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {["Student", "Working Professionals", "Both"].map(
@@ -886,6 +1336,7 @@ export default function PropertyForm() {
                 </div>
                 <ErrorMessage error={errors.suitablefor} />
               </div>
+              }
             </motion.div>
           )}
 
@@ -981,6 +1432,62 @@ export default function PropertyForm() {
                   className="mt-2  font-bold "
                 />
                 <ErrorMessage error={errors.price} />
+
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="allInclusive"
+                      checked={formData.allInclusive || false}
+                      onChange={(e) =>
+                        handleChange("allInclusive", e.target.checked)
+                      }
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                    <Label
+                      htmlFor="allInclusive"
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      All inclusive
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="priceNegotiable"
+                      checked={formData.priceNegotiable || false}
+                      onChange={(e) =>
+                        handleChange("priceNegotiable", e.target.checked)
+                      }
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                    <Label
+                      htmlFor="priceNegotiable"
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      Price negotiable
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="taxExcluded"
+                      checked={formData.taxExcluded || false}
+                      onChange={(e) =>
+                        handleChange("taxExcluded", e.target.checked)
+                      }
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                    <Label
+                      htmlFor="taxExcluded"
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      Tax and gov. charges excluded
+                    </Label>
+                  </div>
+                </div>
               </div>
 
               <div>
