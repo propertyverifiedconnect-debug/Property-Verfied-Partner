@@ -36,19 +36,22 @@ export default function GoogleLogin() {
     console.log("Google User:", payload);
 
     const email = payload.email
-    const name = `${payload.given_name} ${payload.family_name} `
+    const name = `${payload.given_name} `
    
 
     // Send to your backend
     try{
 
-        const res = await axios.post(`${BaseURL}/api/auth/google`, {
+        const res = await axios.post(`/api/auth/googleAuth`, {
             email , 
             name ,
-            role:"partner"
+            role:"partner",
+            Id_token : credential
         })
+   
+    localStorage.clear()
 
-         Cookies.set("client_token_partner",res.data.jwt, {
+    Cookies.set("client_token_partner",res.data.jwt, {
   expires: 1,        
   secure: true,     
   sameSite: "strict"

@@ -122,6 +122,7 @@ export default function SignInForm(): JSX.Element {
         toast.dismiss(loadingToast);
 
         Cookies.remove("client_token_partner", { path: "/" });
+        localStorage.clear()
 
         Cookies.set("client_token_partner", res.data.token, {
           expires: 1,
@@ -140,12 +141,14 @@ export default function SignInForm(): JSX.Element {
       } catch (err: unknown) {
         if (axios.isAxiosError(err) && err.response) {
           // attempt to read server error message
+             toast.dismiss(loadingToast);
           const serverMsg =
             (err.response.data as { error?: string })?.error ?? err.message;
-          alert(serverMsg);
+         toast.error(serverMsg);
           router.push("/auth/login");
         } else {
-          alert(String(err));
+             toast.dismiss(loadingToast);
+          toast.error(String(err));
         }
       }
       // Reset form if needed

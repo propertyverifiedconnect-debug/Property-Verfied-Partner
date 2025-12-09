@@ -64,13 +64,9 @@ export default function ForgotPasswordForm() {
       setLoading(true);
       try {
         const res = await axios.post(
-          `${BASEURL}/api/auth/request-reset`,
+          `/api/auth/forgot-password/emailsent`,
           { email: formData.email },
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
+         
         );
 
         setSuccess(true);
