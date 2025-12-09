@@ -27,6 +27,7 @@ interface FormData {
   city: string;
   excutiveType: string;
   rera: string;
+   CompanyName:string 
 }
 
 interface FormErrors {
@@ -34,6 +35,7 @@ interface FormErrors {
   city?: string;
   excutiveType?: string;
   rera?: string;
+  CompanyName:string
   idProof?: string;
 }
 
@@ -102,6 +104,7 @@ export default function ContactCard() {
     city: "",
     excutiveType: "",
     rera: "",
+    CompanyName:""
   });
 
   const [idProof, setIdProof] = useState<File | null>(null);
@@ -170,6 +173,7 @@ export default function ContactCard() {
         form.append("city", formData.city);
         form.append("excutiveType", formData.excutiveType);
         form.append("rera", formData.rera);
+        form.append("CompanyName", formData.CompanyName);
 
         if (idProof) {
           form.append("idProof", idProof);
@@ -189,7 +193,9 @@ export default function ContactCard() {
           contact: formData.contact, 
           city: formData.city,
           excutiveType: formData.excutiveType,
-          rera: formData.rera
+          rera: formData.rera,
+          CompanyName:formData.CompanyName
+
         };
         localStorage.setItem("partnerdata", JSON.stringify(updatedUser));
 
@@ -240,6 +246,25 @@ export default function ContactCard() {
             value={formData.contact}
             onChange={handleChange}
             maxLength={10}
+            className="w-full"
+          />
+          {errors.contact && (
+            <p className="text-red-500 text-sm mt-1">{errors.contact}</p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="contact" className="mb-2 text-[#247FBA]">
+            Company Name
+          </Label>
+          <Input
+            id="CompanyName"
+            name="CompanyName"
+            type="text"
+            placeholder="Ennter Company Name"
+            value={formData.CompanyName}
+            onChange={handleChange}
+  
             className="w-full"
           />
           {errors.contact && (

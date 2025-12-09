@@ -85,6 +85,7 @@ export default function LoginInForm() {
         const res = await loginUser({email: formData.email,
   password: formData.password,
   role: formData.role,})
+    localStorage.clear()
      
   Cookies.set("client_token_partner",res.token, {
   expires: 1,        
