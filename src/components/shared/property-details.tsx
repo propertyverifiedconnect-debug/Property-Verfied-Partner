@@ -327,15 +327,40 @@ function PropertyDetailsPage({
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-600">Purchase Rate</span>
-          <span className="text-2xl font-bold text-gray-800">78%</span>
+        <span className="text-2xl font-bold text-gray-800">{propertybooking?.AI_Percentage}%</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5">
+          { 
+          propertybooking?.AI_Percentage &&
+
+            
           <div 
-            className="bg-gradient-to-r from-[#3297db] to-[#3699db] h-2.5 rounded-full transition-all duration-300"
-            style={{ width: '78%' }}
+           className={`h-2.5 rounded-full transition-all duration-300 ${
+    propertybooking?.AI_Percentage >= 75 
+      ? 'bg-gradient-to-r from-green-500 to-green-600' 
+      : propertybooking?.AI_Percentage >= 50 
+      ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
+      : propertybooking?.AI_Percentage >= 25 
+      ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' 
+      : 'bg-gradient-to-r from-red-500 to-red-600'
+  }`}       style={{ width: `${propertybooking?.AI_Percentage}%` }}
           />
+          }
         </div>
-        <p className="text-xs text-gray-500 mt-1">High conversion probability</p>
+       <div className="flex items-center gap-1 mt-1">
+  <span className={`text-xs font-medium ${
+    propertybooking?.AI_Percentage >= 75 ? 'text-green-600' :
+    propertybooking?.AI_Percentage >= 50 ? 'text-blue-600' :
+    propertybooking?.AI_Percentage >= 25 ? 'text-yellow-600' :
+    'text-red-600'
+  }`}>
+    {propertybooking?.AI_Percentage >= 75 ? '🔥 High' :
+     propertybooking?.AI_Percentage >= 50 ? '✓ Good' :
+     propertybooking?.AI_Percentage >= 25 ? '○ Moderate' :
+     '⚠ Low'}
+  </span>
+  <span className="text-xs text-gray-500">conversion probability</span>
+</div>
       </div>
 
       {/* Behavior Type */}
@@ -350,7 +375,7 @@ function PropertyDetailsPage({
           </div>
         </div>
         <p className="text-sm text-gray-700">
-          <span className="font-semibold">Frequent Browser</span> - Multiple visits, high page engagement
+          <span className="font-semibold">Frequent Browser</span> - {propertybooking?.AI_Behaviortype}
         </p>
       </div>
 
@@ -358,7 +383,9 @@ function PropertyDetailsPage({
       <div className="border-t pt-4">
         <p className="text-xs font-medium text-gray-600 mb-2">Why Add This Lead?</p>
        <p>
-        Strategic lead cluster identified across key Maharashtra cities (Mumbai, Nagpur) with 3 matching profiles. Professional demographics include established Business Owners and Software Engineers, indicating strong purchasing power. Lifestyle analysis shows predominantly social individuals with one quiet preference, suggesting varied engagement strategies may be needed. Family composition spans from single professionals living independently to families with children, presenting opportunities for both individual and family-oriented product positioning.
+         {
+           propertybooking?.AI_Description
+         }
        </p>
       </div>
 
