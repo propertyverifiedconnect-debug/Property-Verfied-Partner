@@ -13,6 +13,8 @@ import {
   Store,
   MapPin,
   Wifi,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -194,8 +196,8 @@ export default function PropertyForm() {
         if (!formData.roomtype) newErrors.roomtype = "Select room type";
       }
 
-      if (!formData.capacity)
-        newErrors.capacity = "Property capacity is required";
+      // if (!formData.capacity)
+      //   newErrors.capacity = "Property capacity is required";
       
         if(formData.propertyType == "Independent House / Villa" ||  formData.propertyType == "Framhouse" ||  formData.propertyType == "Other")
         {
@@ -239,17 +241,14 @@ export default function PropertyForm() {
 
         if (
           !formData.construction ||
-          !formData.openSide ||
-          !formData.Boundary
+          !formData.openSide 
         ) {
           newErrors.plot1 = "Field is required";
         }
         if (!formData.openSide) {
           newErrors.plot2 = "Field is required";
         }
-        if (!formData.Boundary) {
-          newErrors.plot3 = "Field is required";
-        }
+       
       }
 
       if (formData.propertyType !== "Plot / Land" && !formData.floor) {
@@ -466,7 +465,7 @@ export default function PropertyForm() {
 
   return (
     <div className="min-h-screen flex items-start justify-center  px-2 ">
-      <Card className="w-full max-w-lg shadow-lg rounded-2xl">
+      <Card className="w-full  relative max-w-lg shadow-lg mt-3 rounded-2xl">
         <CardHeader>
           <CardTitle className="text-lg font-bold text-gray-800">
             Step {step} of 3
@@ -1004,7 +1003,7 @@ export default function PropertyForm() {
                     </div>
                     <div>
                       <Label className="text-md font-medium mt-3 ">
-                        Is there boundary wall around the property?
+                        Is there boundary wall around the property? (Optional)
                       </Label>
                       <div className="flex flex-wrap gap-2 mt-1">
                         {["Yes", "No"].map((option) => (
@@ -1609,13 +1608,13 @@ export default function PropertyForm() {
 
         <CardFooter className="flex justify-between">
           {step > 1 && (
-            <Button variant="outline" onClick={handlePrev}>
-              Back
+            <Button variant="outline" className=" absolute -top-12 left-0" onClick={handlePrev}>
+            <ArrowLeft/>Back
             </Button>
           )}
           {step < 3 && (
             <Button onClick={handleNext} className="ml-auto">
-              Next
+              Next <ArrowRight/>
             </Button>
           )}
           {step === 3 && (
